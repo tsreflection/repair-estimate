@@ -1,0 +1,3658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>修理料金お見積り | iPhone即日修理屋さん 津山店</title>
+<style>
+  :root{
+    --bg:#fafafa;
+    --panel:#ffffff;
+    --panel2:#f5f6f8;
+    --gold:#0071e3;
+    --gold-soft:#0071e3;
+    --text:#1d1d1f;
+    --sub:#86868b;
+    --line:#e5e5ea;
+    --green:#34c759;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:120px;
+  }
+  header{
+    padding:28px 20px 18px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-size:18px;
+    letter-spacing:.08em;
+    margin:0 0 4px;
+    color:var(--gold-soft);
+    font-weight:600;
+  }
+  header p{
+    margin:0;
+    font-size:12px;
+    color:var(--sub);
+    letter-spacing:.05em;
+  }
+
+  .steps{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    padding:16px 20px 0;
+  }
+  .step-dot{
+    flex:1;
+    max-width:80px;
+    height:3px;
+    background:var(--line);
+    border-radius:3px;
+    transition:.3s;
+  }
+  .step-dot.active{ background:var(--gold); }
+  .step-dot.done{ background:var(--gold-soft); }
+
+  main{
+    max-width:680px;
+    margin:0 auto;
+    padding:24px 20px 40px;
+  }
+
+  .panel{ display:none; }
+  .panel.show{ display:block; animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .panel-title{
+    font-size:15px;
+    color:var(--gold-soft);
+    margin:0 0 16px;
+    letter-spacing:.04em;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel-title .badge{
+    font-size:11px;
+    color:#ffffff;
+    background:var(--gold);
+    padding:2px 8px;
+    border-radius:20px;
+    font-weight:700;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  .grid.cols-4{ grid-template-columns:repeat(2,1fr); }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 10px;
+    text-align:center;
+    cursor:pointer;
+    transition:.18s;
+    color:var(--text);
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .card:hover{ border-color:var(--gold); transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,113,227,.12); }
+  .card.selected{
+    border-color:var(--gold);
+    background:#eaf3ff;
+    box-shadow:0 0 0 1px var(--gold) inset;
+  }
+  .card .icon{
+    width:32px; height:32px;
+    margin:0 auto 10px;
+    color:var(--sub);
+    transition:.18s;
+  }
+  .card .icon svg{ width:100%; height:100%; display:block; }
+  .card:hover .icon{ color:var(--gold); }
+  .card.selected .icon{ color:var(--gold); }
+  .card .label{ font-size:13px; font-weight:600; }
+  .card .sub{ font-size:11px; color:var(--sub); margin-top:2px; }
+
+  .list-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:10px;
+    cursor:pointer;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .list-card:hover{ border-color:var(--gold); }
+  .list-card.selected{ border-color:var(--gold); background:#eaf3ff; }
+  .list-card .name{ font-size:14px; font-weight:600; }
+  .list-card .check{
+    width:20px;height:20px;border-radius:50%;
+    border:1.5px solid var(--sub);
+    flex-shrink:0;
+  }
+  .list-card.selected .check{
+    border-color:var(--gold);
+    background:var(--gold);
+  }
+
+  .repair-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:10px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .repair-item.selected{ border-color:var(--gold); background:#eaf3ff; }
+  .repair-item .left{ display:flex; align-items:center; gap:12px; }
+  .repair-item .check{
+    width:22px;height:22px;border-radius:6px;
+    border:1.5px solid var(--sub);
+    flex-shrink:0; cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px; color:#ffffff;
+  }
+  .repair-item.selected .check{ border-color:var(--gold); background:var(--gold); }
+  .repair-item .name{ font-size:14px; font-weight:600; }
+  .repair-item .desc{ font-size:11px; color:var(--sub); margin-top:2px; }
+  .repair-item .price{ font-size:14px; font-weight:700; color:var(--gold-soft); white-space:nowrap; }
+
+  .nav-row{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+  }
+  .btn{
+    flex:1;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    letter-spacing:.04em;
+  }
+  .btn-back{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--sub);
+  }
+  .btn-back:hover{ border-color:var(--sub); color:var(--text); }
+  .btn-next{
+    background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+    color:#ffffff;
+  }
+  .btn-next:disabled{
+    background:var(--line);
+    color:var(--sub);
+    cursor:not-allowed;
+  }
+
+  /* 合計バー */
+  .total-bar{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .total-bar .label{ font-size:12px; color:var(--sub); }
+  .total-bar .amount{ font-size:22px; font-weight:800; color:var(--gold-soft); }
+  .total-bar .amount span{ font-size:13px; color:var(--sub); margin-left:4px; }
+
+  /* 完了画面 */
+  .summary{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px;
+  }
+  .summary-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+  }
+  .summary-row:last-child{ border-bottom:none; }
+  .summary-row .sname{ color:var(--sub); }
+  .summary-row .sval{ color:var(--text); font-weight:600; }
+  .grand-total{
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid var(--gold);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .grand-total .gt-label{ font-size:14px; color:var(--gold-soft); }
+  .grand-total .gt-val{ font-size:28px; font-weight:800; color:var(--gold-soft); }
+
+  .empty-note{
+    text-align:center;
+    color:var(--sub);
+    font-size:12px;
+    padding:30px 10px;
+  }
+
+  .factory-notice{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background:#fff8e6;
+    border:1px solid #f3d98b;
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    font-size:12.5px;
+    line-height:1.6;
+    color:#6b5418;
+  }
+  .factory-notice .fn-icon{ font-size:16px; flex-shrink:0; }
+  .factory-notice b{ font-weight:700; }
+
+  .contact-box{
+    margin-top:20px;
+    text-align:center;
+  }
+  .contact-box a{
+    display:inline-block;
+    background:var(--gold);
+    color:#ffffff;
+    padding:14px 28px;
+    border-radius:30px;
+    text-decoration:none;
+    font-weight:700;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>修理料金 かんたんお見積り</h1>
+  <p>iPhone即日修理屋さん 津山店 ／ 岡山県津山市・県北エリア</p>
+</header>
+
+<div class="steps">
+  <div class="step-dot active" data-dot="1"></div>
+  <div class="step-dot" data-dot="2"></div>
+  <div class="step-dot" data-dot="3"></div>
+  <div class="step-dot" data-dot="4"></div>
+</div>
+
+<main>
+
+  <!-- STEP1: デバイス種別 -->
+  <section class="panel show" data-step="1">
+    <p class="panel-title"><span class="badge">STEP 1</span>機種の種類を選んでください</p>
+    <div class="grid" id="deviceGrid"></div>
+  </section>
+
+  <!-- STEP2: シリーズ/モデル -->
+  <section class="panel" data-step="2">
+    <p class="panel-title"><span class="badge">STEP 2</span>シリーズ・モデルを選んでください</p>
+    <div id="modelList"></div>
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="goStep(1)">戻る</button>
+    </div>
+  </section>
+
+  <!-- STEP3: 修理内容（複数選択） -->
+  <section class="panel" data-step="3">
+    <div id="factoryNotice"></div>
+    <p class="panel-title"><span class="badge">STEP 3</span>修理内容を選んでください（複数選択可）</p>
+    <div id="repairList"></div>
+
+    <div id="waterproofSection">
+      <p class="panel-title" style="margin-top:24px;"><span class="badge">オプション</span>防水パッキン交換は必要ですか？</p>
+      <div class="grid" id="waterproofGrid"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="goStep(2)">戻る</button>
+      <button class="btn btn-next" id="toStep4" onclick="goStep(4)" disabled>確認画面へ</button>
+    </div>
+  </section>
+
+  <!-- STEP4: 確認・合計 -->
+  <section class="panel" data-step="4">
+    <p class="panel-title"><span class="badge">STEP 4</span>お見積り内容</p>
+    <div class="summary" id="summaryBox"></div>
+    <div id="factoryNoticeSummary"></div>
+    <div class="contact-box">
+      <a href="tel:090-7505-6181">📞 この内容で相談する（090-7505-6181）</a>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="goStep(3)">修理内容を選び直す</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="total-bar">
+  <span class="label">現在の合計</span>
+  <span class="amount" id="liveTotal">¥0<span>（税込）</span></span>
+</div>
+
+<script>
+/* ===========================================================
+   料金・機種データ：ここを店舗の実際の価格表に合わせて編集してください
+   =========================================================== */
+const DEVICE_TYPES = [
+  { id:'iphone',  label:'iPhone',
+    icon:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="15" y="4" width="18" height="40" rx="4"/>
+      <circle cx="24" cy="11" r="0.8" fill="currentColor" stroke="none"/>
+      <line x1="20" y1="38.5" x2="28" y2="38.5"/>
+    </svg>` },
+  { id:'ipad',    label:'iPad',
+    icon:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="5" width="30" height="38" rx="4"/>
+      <circle cx="24" cy="10.3" r="0.8" fill="currentColor" stroke="none"/>
+      <line x1="20" y1="39" x2="28" y2="39"/>
+    </svg>` },
+  { id:'android', label:'Android',
+    icon:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="15" y="9" width="18" height="34" rx="3"/>
+      <line x1="18" y1="6" x2="20.5" y2="9.5"/>
+      <line x1="30" y1="6" x2="27.5" y2="9.5"/>
+      <line x1="20" y1="16" x2="28" y2="16"/>
+      <line x1="20" y1="22" x2="28" y2="22"/>
+    </svg>` },
+  { id:'tablet',  label:'タブレット',
+    icon:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="12" width="40" height="24" rx="4"/>
+      <line x1="38.5" y1="20" x2="38.5" y2="28"/>
+    </svg>` },
+  { id:'ipod',    label:'iPod Touch',
+    icon:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="17" y="8" width="14" height="32" rx="3"/>
+      <circle cx="24" cy="13" r="0.7" fill="currentColor" stroke="none"/>
+      <circle cx="24" cy="34" r="2" stroke="currentColor"/>
+    </svg>` },
+  { id:'applewatch', label:'Apple Watch',
+    icon:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="14" y="11" width="20" height="26" rx="6"/>
+      <path d="M18 11 L18 5 L30 5 L30 11" />
+      <path d="M18 37 L18 43 L30 43 L30 37" />
+      <line x1="34" y1="18" x2="37" y2="18"/>
+    </svg>` },
+];
+
+const MODELS = {
+  iphone: [
+    'iPhone 17 / 17 Pro / 17 Pro Max',
+    'iPhone 16e',
+    'iPhone 16 Pro Max',
+    'iPhone 16 Pro',
+    'iPhone 16 Plus',
+    'iPhone 16',
+    'iPhone 15 Pro Max',
+    'iPhone 15 Pro',
+    'iPhone 15 Plus',
+    'iPhone 15',
+    'iPhone 14 Pro Max',
+    'iPhone 14 Pro',
+    'iPhone 14 Plus',
+    'iPhone 14',
+    'iPhone 13 Pro Max',
+    'iPhone 13 Pro',
+    'iPhone 13',
+    'iPhone 13 mini',
+    'iPhone SE（第3世代）',
+    'iPhone 12 Pro Max',
+    'iPhone 12 / 12 Pro',
+    'iPhone 12 mini',
+    'iPhone 11 Pro Max',
+    'iPhone 11 Pro',
+    'iPhone 11',
+    'iPhone SE（第2世代）',
+    'iPhone XR',
+    'iPhone XS Max',
+    'iPhone XS',
+    'iPhone X',
+    'iPhone 8 Plus',
+    'iPhone 8',
+    'iPhone 7 Plus',
+    'iPhone 7',
+    'iPhone 6s Plus',
+    'iPhone 6s',
+    'iPhone 6 Plus',
+    'iPhone 6',
+    'iPhone 5s / SE（第1世代）',
+    'iPhone 5c',
+    'iPhone 5',
+  ],
+  ipad: [
+    // M2/M3/M4/M5世代（PDFに記載なし、旧データのまま）
+    'iPad Pro 13 M5','iPad Pro 13 M4',
+    'iPad Pro 11 M5','iPad Pro 11 M4',
+    'iPad Air 13(M4)','iPad Air 11(M4)','iPad Air 13(M3)','iPad Air 11(M3)','iPad Air 13(M2)','iPad Air 11(M2)',
+    'iPad mini A17Pro','iPad A16',
+    // ここからPDF反映分（税込・作業費込）
+    'iPad Pro 12.9 5th / 6th','iPad Pro 12.9 3rd / 4th','iPad Pro 12.9 2nd','iPad Pro 12.9 1st',
+    'iPad Pro 11 1st / 2nd / 3rd / 4th',
+    'iPad Pro 10.5','iPad Pro 9.7',
+    'iPad Air5','iPad Air4','iPad Air3','iPad Air2','iPad Air',
+    'iPad mini6','iPad mini4/ mini5','iPad mini3','iPad mini2','iPad mini',
+    'iPad 10th 2022','iPad 9th 2021','iPad 7th 2019/8th 2020','iPad 5th 2017/6th 2018','iPad 4th','iPad 2nd / 3rd','iPad 1st',
+  ],
+  android: [
+    'Ascend G620S',
+    'Lumiere 503HW',
+    'honor 6 Plus',
+    'honor 8',
+    'honor 9',
+    'nova',
+    'nova2',
+    'nova3',
+    'nova lite',
+    'nova lite 2',
+    'nova lite 3',
+    'nova 5T',
+    'P8 lite',
+    'P8 max',
+    'P9',
+    'P9 lite',
+    'P10',
+    'P10 lite',
+    'P10 Plus',
+    'P20',
+    'P20 lite',
+    'P20 pro',
+    'P30',
+    'P30 lite',
+    'P30 Pro',
+    'HUAWEI Mate 9',
+    'HUAWEI Mate 10 lite',
+    'HUAWEI Mate 10',
+    'HUAWEI Mate 10 Pro',
+    'HUAWEI Mate 20 lite',
+    'HUAWEI Mate 20',
+    'HUAWEI Mate 20 Pro',
+    'MediaPad T1 7',
+    'MediaPad T1 10',
+    'MediaPad T2 10',
+    'MediaPad T2 7',
+    'MediaPad T3 7',
+    'MediaPad T3 8',
+    'MediaPad T3 10',
+    'Mediapad T5 10',
+    'MediaPad M2 8',
+    'MediaPad M3 lite',
+    'MediaPad M3 lite 10 wp',
+    'Mediapad M5',
+    'MediaPad M5 lite',
+    'MediaPad M5 Pro',
+    'MediaPad M5 10',
+    'MediaPad M5 lite 8',
+    'ZenFone 5 (A500KL)',
+    'ZenFone 2 (ZE551ML)',
+    'ZenFone 2 Laser (ZE500KL)',
+    'ZenFone Selfie (ZD551KL)',
+    'ZenFone Zoom (ZX551ML)',
+    'ZenFone Max (ZC550KL)',
+    'ZenFone Go (ZB551KL)',
+    'ZenFone 3 (ZE520KL)',
+    'ZenFone 3 (ZE552KL)',
+    'ZenFone 3 Deluxe (ZS570KL)',
+    'ZenFone 3 Laser (ZC551KL)',
+    'Zenfone 3 Ultra',
+    'ZenFone 3 Max (ZC520TL)',
+    'ZenFone 3 Max (ZC553KL)',
+    'ZenFone AR (ZS571KL)',
+    'ZenFone Live (ZB501KL)',
+    'ZenFone 4 (ZE554KL)',
+    'ZenFone 4 Selfie Pro (ZD552KL)',
+    'ZenFone 4 Pro (ZS551KL)',
+    'ZenFone 4 Max (ZC520KL)',
+    'ZenFone 4 Selfie (ZD553KL)',
+    'ZenFone Max Plus M1 (ZB570TL)',
+    'ZenFone 5 (ZE620KL)',
+    'ZenFone 5Q (ZC600KL)',
+    'ZenFone 5Z (ZS620KL)',
+    'ZenFone Max M1 (ZB555KL)',
+    'ROG Phone (ZS600KL)',
+    'ZenFone Live L1 (ZA550KL)',
+    'ZenFone Max Pro M1 (ZB602KL)',
+    'ZenFone Max M2 (ZB633KL)',
+    'ZenFone Max Pro M2 (ZB631KL)',
+    'Zenfone 6 (ZS630KL)',
+    'ZenPad 7.0 (Z370C)',
+    'ZenPad 10 (Z300C)',
+    'ZenPad 8.0 (Z380C)',
+    'ZenPad 8.0 (Z380KL)',
+    'ZenPad 3 8.0 (Z581KL)',
+    'ZenPad 3S 10 (Z500KL)',
+    'ZenPad 10 (Z301M)',
+    'Galaxy S7 edge',
+    'Galaxy S8',
+    'Galaxy S8+',
+    'Galaxy S9',
+    'Galaxy S9+',
+    'Galaxy S10',
+    'Galaxy S10+',
+    'Galaxy S20 5G',
+    'Galaxy S20+ 5G',
+    'Galaxy S20 Ultra 5G',
+    'Galaxy S21 5G',
+    'Galaxy S21+ 5G',
+    'Galaxy S21 Ultra 5G',
+    'Galaxy S22',
+    'Galaxy S22+',
+    'Galaxy S22 Ultra',
+    'Galaxy S23',
+    'Galaxy S23+',
+    'Galaxy S23 Ultra',
+    'Galaxy S23 FE',
+    'Galaxy S24',
+    'Galaxy S24+',
+    'Galaxy S24 Ultra',
+    'Galaxy Note8',
+    'Galaxy Note9',
+    'Galaxy Note10 Plus',
+    'Galaxy Note20 Ultra',
+    'Galaxy A7',
+    'Galaxy A20',
+    'Galaxy A21',
+    'Galaxy A22 5G',
+    'Galaxy A23 5G',
+    'Galaxy A30',
+    'Galaxy A32 5G',
+    'Galaxy A41',
+    'Galaxy A51 5G',
+    'Galaxy A52 5G',
+    'Galaxy A53 5G',
+    'Galaxy A54 5G',
+    'Galaxy A55 5G',
+    'Galaxy Z Fold 5G',
+    'Galaxy Z Fold2 5G',
+    'Galaxy Z Fold3 5G',
+    'Galaxy Z Fold4 5G',
+    'Galaxy Z Fold5 5G',
+    'Galaxy Z Flip 5G',
+    'Galaxy Z Flip3 5G',
+    'Galaxy Z Flip4 5G',
+    'Galaxy Z Flip5 5G',
+    'Xperia X Performance',
+    'Xperia X Compact',
+    'Xperia XZ',
+    'Xperia XZs',
+    'Xperia XZ Premium',
+    'Xperia XZ1',
+    'Xperia XZ1 Compact',
+    'Xperia XZ2',
+    'Xperia XZ2 Compact',
+    'Xperia XZ2 Premium',
+    'Xperia XZ3',
+    'Xperia 1',
+    'Xperia 1Ⅱ',
+    'Xperia 1Ⅲ',
+    'Xperia 1Ⅳ',
+    'Xperia 1Ⅴ',
+    'Xperia 1Ⅵ',
+    'Xperia 5',
+    'Xperia 5Ⅱ',
+    'Xperia 5 Ⅲ',
+    'Xperia 5Ⅳ',
+    'Xperia 5Ⅴ',
+    'Xperia 8/8lite',
+    'Xperia 10 Plus',
+    'Xperia 10Ⅱ',
+    'Xperia 10Ⅲ',
+    'Xperia 10Ⅳ',
+    'Xperia 10Ⅴ',
+    'Xperia 10Ⅵ',
+    'Xperia Ace',
+    'Xperia AceⅡ',
+    'Xperia AceⅢ',
+    'Xperia Pro',
+    'Xperia Pro-Ⅰ',
+    'Xperia Z2 Tablet',
+    'Xperia Z3 Tablet Compact',
+    'Xperia Z4 Tablet',
+    'arrows M04',
+    'arrows M05',
+    'arrows U/J',
+    'arrows We',
+    'arrows We 2',
+    'Rakuten mini',
+    'Rakuten Hand',
+    'Rakuten Hand2',
+    'Rakuten BIG',
+    'Rakuten BIGs',
+    'Pixel 3',
+    'Pixel 3 XL',
+    'Pixel 3a',
+    'Pixel 3a XL',
+    'Pixel 4',
+    'Pixel 4 XL',
+    'Pixel 4a',
+    'Pixel 4a 5G',
+    'Pixel 5',
+    'Pixel 5a 5G',
+    'Pixel 6',
+    'Pixel 6A',
+    'Pixel 6 Pro',
+    'Pixel 7',
+    'Pixel 7A',
+    'Pixel 7 Pro',
+    'Pixel 8',
+    'Pixel 8A',
+    'Pixel 8 Pro',
+    'Pixel 9',
+    'Pixel 9 Pro',
+    'Pixel 9 Pro XL',
+    'Pixel Fold',
+    'Mi Note 10',
+    'Mi Note 10 Lite',
+    'Mi 11 Lite 5G',
+    'Xiaomi 11T',
+    'Xiaomi 11T Pro',
+    'Redmi 9T',
+    'Redmi 12 5G',
+    'Redmi Note 9s',
+    'Redmi Note 9T',
+    'Redmi Note 9T 5G',
+    'Redmi Note 10 5G',
+    'Redmi Note 10 Pro 4G',
+    'Redmi Note 10 Pro 5G',
+    'Redmi Note 11',
+    'Redmi Note 11 Pro 5G',
+    'Redmi Note 10T',
+    'Redmi Note 10 JE',
+    'Poco F4 GT',
+    'Black Shark 2',
+    'Black Shark 3',
+    'Black Shark 4',
+    'Black Shark 4 Pro',
+    'Black Shark 5',
+    'Black Shark 5 Pro',
+    'Xiaomi Pad 5',
+    'Redmi Pad',
+    'Xiaomi Pad 6',
+    'AQUOS sence',
+    'AQUOS sence 2',
+    'AQUOS sence 3',
+    'AQUOS sence 3 basic',
+    'AQUOS sence 3 lite',
+    'AQUOS sence 3 plus',
+    'AQUOS sence 4',
+    'AQUOS sence 4 lite',
+    'AQUOS sence 4 plus',
+    'AQUOS sence 4 basic',
+    'AQUOS sence 5G',
+    'AQUOS sence 5G basic',
+    'AQUOS sence 6',
+    'AQUOS sence 6S',
+    'AQUOS sence 7',
+    'AQUOS sence 7plus',
+    'AQUOS sence 8',
+    'AQUOS R',
+    'AQUOS R2',
+    'AQUOS R3',
+    'AQUOS R5G',
+    'AQUOS R6',
+    'AQUOS R7',
+    'AQUOS R8',
+    'AQUOS R8 Pro',
+    'AQUOS R9',
+    'AQUOS zero',
+    'AQUOS zero5G basic',
+    'AQUOS zero 2',
+    'AQUOS zero 6',
+    'AQUOS Wish',
+    'AQUOS Wish2',
+    'AQUOS Wish3',
+    'AQUOS Wish4',
+    'Reno A',
+    'Reno 3 5G',
+    'Reno 3A',
+    'Reno 5A',
+    'Reno 7A',
+    'Reno 9A',
+    'Reno 10Pro',
+    'Reno 11A',
+    'Find X',
+    'Find X2 Pro',
+    'Find X3 Pro',
+    'A5 2020',
+    'A54 5G',
+    'A55s 5G',
+    'A73',
+    'A77',
+    'A79 5G',
+    'A3 5G',
+  ],
+  tablet: [
+    'Android タブレット',
+    'Surface シリーズ',
+    'その他タブレット',
+  ],
+  ipod: [
+    'iPod Touch 4th',
+    'iPod Touch 5th / 6th / 7th',
+],
+  applewatch: [
+    'AppleWatch 初代 38',
+    'AppleWatch 初代 42',
+    'AppleWatch 1st 38',
+    'AppleWatch 1st 42',
+    'AppleWatch 2nd 38',
+    'AppleWatch 2nd 42',
+    'AppleWatch 3rd 38 GPS',
+    'AppleWatch 3rd 38 GPS+Cellular',
+    'AppleWatch 3rd 42 GPS',
+    'AppleWatch 3rd 42 GPS+Cellular',
+    'AppleWatch 4th 40',
+    'AppleWatch 4th 44',
+    'AppleWatch 5th 40',
+    'AppleWatch 5th 44',
+    'AppleWatch SE 40',
+    'AppleWatch SE 44',
+    'AppleWatch 6th 40',
+    'AppleWatch 6th 44',
+    'AppleWatch 7th 41',
+    'AppleWatch 7th 45',
+    'AppleWatch SE2 40',
+    'AppleWatch SE2 44',
+    'AppleWatch 8th 41',
+    'AppleWatch 8th 45',
+    'AppleWatch Ultra',
+    'AppleWatch 9th 41',
+    'AppleWatch 9th 45',
+    'AppleWatch Ultra2',
+    'AppleWatch 10 42',
+    'AppleWatch 10 46',
+    'AppleWatch Ultra3',
+    'AppleWatch SE3 40',
+    'AppleWatch SE3 44',
+    'AppleWatch 11 42',
+    'AppleWatch 11 46',
+],
+};
+
+// 修理メニュー：modelPriceKey があるものはモデル別価格表（PART_xxx）を優先して使う
+const REPAIR_MENU = [
+  { id:'glassOnly',   name:'ガラスのみ修理',             desc:'液晶は無事でガラスのみ割れている場合', price:9800,  modelPriceKey:'glassOnly' },
+  { id:'screen',      name:'画面（ガラス＋液晶）修理',   desc:'ガラス割れ・タッチ不良・表示不良など', price:12800, modelPriceKey:'screen' },
+  { id:'battery',     name:'バッテリー交換',             desc:'消耗・膨張・持ちが悪い',             price:6800,  modelPriceKey:'battery' },
+  { id:'back',        name:'背面パネル修理',             desc:'背面ガラス割れ',                     price:9800,  modelPriceKey:null },
+  { id:'camera',      name:'背面カメラ修理',             desc:'ピントが合わない・映らない',         price:8800,  modelPriceKey:'camera' },
+  { id:'frontCamera', name:'フロントカメラ修理',         desc:'インカメラが映らない・ピント不良',   price:7800,  modelPriceKey:'frontCamera' },
+  { id:'charge',      name:'充電口（ドックコネクタ）修理', desc:'充電できない・接触不良',           price:7800,  modelPriceKey:'charge' },
+  { id:'speaker',     name:'スピーカー修理',             desc:'音が出ない・聞こえにくい',           price:6800,  modelPriceKey:'speaker' },
+  { id:'homeButton',  name:'ホームボタン修理',           desc:'反応しない・押せない（Touch ID機種）', price:6800, modelPriceKey:'homeButton' },
+  { id:'vibrator',    name:'バイブレーター修理',         desc:'振動しない・振動が弱い',             price:6800,  modelPriceKey:'vibrator' },
+  { id:'button',      name:'電源／音量ボタン修理',       desc:'押せない・反応しない',               price:5800,  modelPriceKey:'topButton' },
+  { id:'headphoneJack', name:'イヤホンジャック修理',     desc:'反応しない・接触不良',               price:6800,  modelPriceKey:'headphoneJack' },
+  { id:'water',       name:'水没復旧対応',               desc:'水濡れ後の起動確認・修復',           price:5500,  modelPriceKey:null },
+];
+
+// モデル別価格表（エアレジCSVより自動反映・税込）
+
+const PART_BATTERY = {
+    'iPhone 5': 3630,
+    'iPhone 5c': 3630,
+    'iPhone 5s / SE（第1世代）': 3630,
+    'iPhone 6': 3630,
+    'iPhone 6 Plus': 3630,
+    'iPhone 6s': 3630,
+    'iPhone 6s Plus': 3630,
+    'iPhone 7': 3630,
+    'iPhone 7 Plus': 3630,
+    'iPhone 8': 4620,
+    'iPhone 8 Plus': 4620,
+    'iPhone X': 5610,
+    'iPhone XR': 5610,
+    'iPhone XS': 6600,
+    'iPhone XS Max': 6600,
+    'iPhone SE（第2世代）': 4620,
+    'iPhone 11': 6380,
+    'iPhone 11 Pro': 6600,
+    'iPhone 11 Pro Max': 6710,
+    'iPhone 12 mini': 8360,
+    'iPhone 12 / 12 Pro': 7810,
+    'iPhone 12 Pro Max': 8800,
+    'iPhone 13 mini': 9350,
+    'iPhone 13': 8800,
+    'iPhone 13 Pro': 11880,
+    'iPhone 13 Pro Max': 12870,
+    'iPhone SE（第3世代）': 5830,
+    'iPhone 14': 11880,
+    'iPhone 14 Plus': 11880,
+    'iPhone 14 Pro': 15400,
+    'iPhone 14 Pro Max': 16830,
+    'iPhone 15': 12870,
+    'iPhone 15 Plus': 12870,
+    'iPhone 15 Pro': 17820,
+    'iPhone 15 Pro Max': 19800,
+  };
+
+const PART_CHARGE = {
+    'iPhone 5': 6600,
+    'iPhone 5c': 6600,
+    'iPhone 5s / SE（第1世代）': 6600,
+    'iPhone 6': 6600,
+    'iPhone 6 Plus': 6600,
+    'iPhone 6s': 6600,
+    'iPhone 6s Plus': 6600,
+    'iPhone 7': 8800,
+    'iPhone 7 Plus': 8800,
+    'iPhone 8': 9350,
+    'iPhone 8 Plus': 9350,
+    'iPhone X': 11000,
+    'iPhone XS': 12100,
+    'iPhone XR': 11000,
+    'iPhone XS Max': 12650,
+    'iPhone 11': 14850,
+    'iPhone 11 Pro': 19250,
+    'iPhone 11 Pro Max': 20900,
+    'iPhone SE（第2世代）': 9900,
+    'iPhone 12 mini': 16500,
+    'iPhone 12 / 12 Pro': 15400,
+    'iPhone 12 Pro Max': 18150,
+    'iPhone 13 mini': 17600,
+    'iPhone 13': 17600,
+    'iPhone 13 Pro': 19250,
+    'iPhone 13 Pro Max': 20900,
+  };
+
+const PART_CAMERA = {
+    'iPhone 5': 6600,
+    'iPhone 5c': 6600,
+    'iPhone 5s / SE（第1世代）': 6600,
+    'iPhone 6': 6600,
+    'iPhone 6 Plus': 7150,
+    'iPhone 6s': 7150,
+    'iPhone 6s Plus': 8800,
+    'iPhone 7': 10450,
+    'iPhone 7 Plus': 14850,
+    'iPhone 8': 13200,
+    'iPhone 8 Plus': 15400,
+    'iPhone X': 14300,
+    'iPhone XS': 14850,
+    'iPhone XS Max': 15400,
+    'iPhone XR': 14300,
+    'iPhone 11': 16500,
+    'iPhone 11 Pro': 17600,
+    'iPhone 11 Pro Max': 18700,
+    'iPhone SE（第2世代）': 13200,
+    'iPhone 12 mini': 19800,
+    'iPhone 12 / 12 Pro': 19250,
+    'iPhone 12 Pro Max': 23100,
+    'iPhone SE（第3世代）': 14850,
+    'iPhone 13 mini': 20900,
+    'iPhone 13': 19800,
+    'iPhone 13 Pro': 31350,
+    'iPhone 13 Pro Max': 32450,
+    'iPhone 14': 27500,
+    'iPhone 14 Plus': 25300,
+    'iPhone 14 Pro': 29700,
+    'iPhone 14 Pro Max': 30800,
+  };
+
+const PART_FRONT_CAMERA = {
+    'iPhone 5': 5500,
+    'iPhone 5c': 5500,
+    'iPhone 5s / SE（第1世代）': 5500,
+    'iPhone 6': 5500,
+    'iPhone 6 Plus': 5500,
+    'iPhone 6s': 6600,
+    'iPhone 6s Plus': 6600,
+    'iPhone 7': 8250,
+    'iPhone 7 Plus': 8250,
+    'iPhone 8': 8800,
+    'iPhone 8 Plus': 9900,
+    'iPhone SE（第2世代）': 9900,
+    'iPhone SE（第3世代）': 11000,
+    'iPhone X': 11550,
+    'iPhone XS': 12650,
+    'iPhone XS Max': 13200,
+    'iPhone XR': 11000,
+    'iPhone 11': 14850,
+    'iPhone 11 Pro': 15950,
+    'iPhone 11 Pro Max': 17050,
+    'iPhone 12 mini': 15950,
+    'iPhone 12 / 12 Pro': 14850,
+    'iPhone 12 Pro Max': 16500,
+    'iPhone 13 mini': 17600,
+    'iPhone 13': 16500,
+    'iPhone 13 Pro': 19250,
+    'iPhone 13 Pro Max': 20900,
+  };
+
+const PART_HOME_BUTTON = {
+    'iPhone 5': 6600,
+    'iPhone 5c': 6600,
+    'iPhone 5s / SE（第1世代）': 6600,
+    'iPhone 6': 6600,
+    'iPhone 6 Plus': 6600,
+    'iPhone 6s': 6600,
+    'iPhone 6s Plus': 6600,
+    'iPhone 7': 8800,
+    'iPhone 7 Plus': 8800,
+    'iPhone 8': 8800,
+    'iPhone 8 Plus': 8800,
+    'iPhone SE（第2世代）': 8800,
+  };
+
+const PART_SPEAKER = {
+    'iPhone 5': 4400,
+    'iPhone 5c': 4400,
+    'iPhone 5s / SE（第1世代）': 4400,
+    'iPhone 6': 5500,
+    'iPhone 6 Plus': 5500,
+    'iPhone 6s': 6600,
+    'iPhone 6s Plus': 6600,
+    'iPhone 7': 8800,
+    'iPhone 7 Plus': 8800,
+    'iPhone 8': 8800,
+    'iPhone 8 Plus': 8800,
+    'iPhone X': 9900,
+    'iPhone XS': 10450,
+    'iPhone XS Max': 11000,
+    'iPhone XR': 10450,
+    'iPhone 11': 12100,
+    'iPhone 11 Pro': 13200,
+    'iPhone 11 Pro Max': 13750,
+    'iPhone SE（第2世代）': 10450,
+  };
+
+const PART_VIBRATOR = {
+    'iPhone 5': 6600,
+    'iPhone 5c': 6600,
+    'iPhone 5s / SE（第1世代）': 6600,
+    'iPhone 6': 6600,
+    'iPhone 6 Plus': 6600,
+    'iPhone 6s': 6600,
+    'iPhone 6s Plus': 6600,
+    'iPhone 7': 8800,
+    'iPhone 7 Plus': 8800,
+    'iPhone 8': 9350,
+    'iPhone 8 Plus': 9350,
+    'iPhone X': 11000,
+    'iPhone XR': 11000,
+    'iPhone XS': 12100,
+    'iPhone XS Max': 12650,
+    'iPhone 11': 14850,
+    'iPhone 11 Pro': 16500,
+    'iPhone 11 Pro Max': 18480,
+  };
+
+const PART_TOP_BUTTON = {
+    'iPhone 5': 6600,
+    'iPhone 5c': 6600,
+    'iPhone 5s / SE（第1世代）': 6600,
+    'iPhone 6': 6600,
+    'iPhone 6 Plus': 6600,
+    'iPhone 6s': 6600,
+    'iPhone 6s Plus': 6600,
+    'iPhone 7': 8800,
+    'iPhone 7 Plus': 8800,
+    'iPhone 8': 9350,
+    'iPhone 8 Plus': 9350,
+    'iPhone X': 11000,
+    'iPhone XS': 12100,
+    'iPhone XS Max': 12650,
+    'iPhone XR': 11000,
+    'iPhone 11': 14850,
+    'iPhone 11 Pro': 16500,
+    'iPhone 11 Pro Max': 18480,
+    'iPhone SE（第2世代）': 9900,
+  };
+
+
+
+// 作業費：修理を1つでも選んだ場合は必ず加算（税込）
+const WORK_FEE = { name:'作業費', price:2200 };
+
+// 防水パッキン交換：必要かどうかをユーザーに選んでもらう（価格は要調整）
+const WATERPROOF_OPTION = { id:'waterproof', name:'防水パッキン交換', desc:'防水・防塵性能の維持に必要な場合があります', price:1650 };
+
+// 画面（フロントパネル）モデル別ベース価格：エアレジCSV「カテゴリ1」より自動反映（外税→税込10%換算）
+// 「〜」表示の基本料金。OLED等のランクアップは店頭で口頭説明。
+// ※ベースのLCDを扱っていない機種は「高品質LCD」が実質ベース価格
+const SCREEN_BASE_PRICE = {
+  'iPhone 16 Pro Max': 55000,  // 税抜50,000
+  'iPhone 16 Pro':     47300,  // 税抜43,000
+  'iPhone 16 Plus':    38500,  // 税抜35,000（高品質LCDが実質ベース）
+  'iPhone 16':          35200,  // 税抜32,000（高品質LCDが実質ベース）
+  'iPhone 15 Pro Max': 35860,  // 税抜32,600
+  'iPhone 15 Pro':     29810,  // 税抜27,100
+  'iPhone 15 Plus':    27830,  // 税抜25,300
+  'iPhone 15':          26840,  // 税抜24,400
+  'iPhone 14 Pro Max': 32890,  // 税抜29,900
+  'iPhone 14 Pro':     27830,  // 税抜25,300
+  'iPhone 14 Plus':    22880,  // 税抜20,800（高品質LCDが実質ベース）
+  'iPhone 14':          21780,  // 税抜19,800
+  'iPhone 13 Pro Max': 26840,  // 税抜24,400
+  'iPhone 13 Pro':     24860,  // 税抜22,600（高品質LCDが実質ベース）
+  'iPhone 13':          12870,  // 税抜11,700
+  'iPhone 13 mini':    13310,  // 税抜12,100
+  'iPhone SE（第3世代）': 8360,  // 税抜7,600（高品質LCDが実質ベース）
+  'iPhone 12 Pro Max': 13860,  // 税抜12,600（高品質LCDが実質ベース）
+  'iPhone 12 / 12 Pro': 11880,  // 税抜10,800
+  'iPhone 12 mini':    12320,  // 税抜11,200
+  'iPhone 11 Pro Max': 9900,   // 税抜9,000
+  'iPhone 11 Pro':     9130,   // 税抜8,300
+  'iPhone 11':          8800,   // 税抜8,000
+  'iPhone SE（第2世代）': 5830,  // 税抜5,300
+  'iPhone XR':          8800,   // 税抜8,000
+  'iPhone XS Max':     10890,  // 税抜9,900
+  'iPhone XS':          8030,   // 税抜7,300
+  'iPhone X':           8030,   // 税抜7,300
+  'iPhone 8 Plus':      6160,   // 税抜5,600
+  'iPhone 8':           5170,   // 税抜4,700
+  'iPhone 7 Plus':      6160,   // 税抜5,600
+  'iPhone 7':           5170,   // 税抜4,700
+  'iPhone 6s Plus':     5170,   // 税抜4,700
+  'iPhone 6s':          4840,   // 税抜4,400
+  'iPhone 6 Plus':      5390,   // 税抜4,900
+  'iPhone 6':           5170,   // 税抜4,700
+  'iPhone 5s / SE（第1世代）': 5060, // 税抜4,600
+  'iPhone 5c':          5060,   // 税抜4,600
+  'iPhone 5':           5060,   // 税抜4,600
+};
+
+// 価格データがまだ無い機種（店頭確認扱い）
+const SCREEN_PRICE_TBD = ['iPhone 17 / 17 Pro / 17 Pro Max', 'iPhone 16e'];
+
+// modelPriceKey と実データの対応表
+const IPAD_GLASS_ONLY = {
+  'iPad 1st': 8000,
+  'iPad 2nd': 7000,
+  'iPad 3rd': 7000,
+  'iPad 4th': 7000,
+  'iPad 5th': 7500,
+  'iPad 6th': 7500,
+  'iPad 7th': 7500,
+  'iPad 8th': 7500,
+  'iPad 9th': 8500,
+  'iPad 10th': 9500,
+  'iPad A16': 9500,
+  'iPad Air': 7500,
+  'iPad Air2': 18000,
+  'iPad Air3': 23000,
+  'iPad Air4': 24000,
+  'iPad Air5': 24000,
+  'iPad Air 11(M2)': 24000,
+  'iPad Air 13(M2)': 38000,
+  'iPad Air 11(M3)': 24000,
+  'iPad Air 13(M3)': 38000,
+  'iPad Air 11(M4)': 88000,
+  'iPad Air 13(M4)': 124000,
+  'iPad mini': 7000,
+  'iPad mini2': 7000,
+  'iPad mini3': 7000,
+  'iPad mini4': 17000,
+  'iPad mini5': 17000,
+  'iPad mini6': 28000,
+  'iPad mini A17Pro': 29000,
+  'iPad Pro 9.7': 19000,
+  'iPad Pro 10.5': 23000,
+  'iPad Pro 11': 33000,
+  'iPad Pro 11 2nd': 33000,
+  'iPad Pro 11 3rd': 31000,
+  'iPad Pro 11 4th': 31000,
+  'iPad Pro 11 M4': 151000,
+  'iPad Pro 11 M5': 154000,
+  'iPad Pro 12.9 1st': 29000,
+  'iPad Pro 12.9 2nd': 44000,
+  'iPad Pro 12.9 3rd': 31000,
+  'iPad Pro 12.9 4th': 31000,
+  'iPad Pro 12.9 5th': 43000,
+  'iPad Pro 12.9 6th': 43000,
+  'iPad Pro 13 M4': 179000,
+  'iPad Pro 13 M5': 210000,
+};
+
+const IPAD_SCREEN = {
+  'iPad 1st': 15000,
+  'iPad 2nd': 11000,
+  'iPad 3rd': 11000,
+  'iPad 4th': 11000,
+  'iPad 5th': 15000,
+  'iPad 6th': 15000,
+  'iPad 7th': 17000,
+  'iPad 8th': 18000,
+  'iPad 9th': 18000,
+  'iPad 10th': 23000,
+  'iPad A16': 23000,
+  'iPad Air': 15000,
+  'iPad Air2': 18000,
+  'iPad Air3': 23000,
+  'iPad Air4': 24000,
+  'iPad Air5': 24000,
+  'iPad Air 11(M2)': 24000,
+  'iPad Air 13(M2)': 38000,
+  'iPad Air 11(M3)': 24000,
+  'iPad Air 13(M3)': 38000,
+  'iPad Air 11(M4)': 88000,
+  'iPad Air 13(M4)': 124000,
+  'iPad mini': 12000,
+  'iPad mini2': 12000,
+  'iPad mini3': 12000,
+  'iPad mini4': 17000,
+  'iPad mini5': 17000,
+  'iPad mini6': 28000,
+  'iPad mini A17Pro': 29000,
+  'iPad Pro 9.7': 19000,
+  'iPad Pro 10.5': 23000,
+  'iPad Pro 11': 33000,
+  'iPad Pro 11 2nd': 33000,
+  'iPad Pro 11 3rd': 31000,
+  'iPad Pro 11 4th': 31000,
+  'iPad Pro 11 M4': 141000,
+  'iPad Pro 11 M5': 142000,
+  'iPad Pro 12.9 1st': 29000,
+  'iPad Pro 12.9 2nd': 44000,
+  'iPad Pro 12.9 3rd': 31000,
+  'iPad Pro 12.9 4th': 31000,
+  'iPad Pro 12.9 5th': 43000,
+  'iPad Pro 12.9 6th': 43000,
+  'iPad Pro 13 M4': 179000,
+  'iPad Pro 13 M5': 210000,
+};
+
+const IPAD_BATTERY = {
+  'iPad 1st': 7000,
+  'iPad 2nd': 7000,
+  'iPad 3rd': 7000,
+  'iPad 4th': 7000,
+  'iPad 5th': 7000,
+  'iPad 6th': 7000,
+  'iPad 7th': 7000,
+  'iPad 8th': 7000,
+  'iPad 9th': 7000,
+  'iPad 10th': 8000,
+  'iPad A16': 8000,
+  'iPad Air': 7000,
+  'iPad Air2': 7000,
+  'iPad Air3': 8000,
+  'iPad Air4': 8000,
+  'iPad Air5': 8000,
+  'iPad Air 11(M2)': 8000,
+  'iPad Air 13(M2)': 10000,
+  'iPad Air 11(M3)': 8000,
+  'iPad Air 13(M3)': 10000,
+  'iPad mini': 7000,
+  'iPad mini2': 7000,
+  'iPad mini3': 7000,
+  'iPad mini4': 7000,
+  'iPad mini5': 7000,
+  'iPad mini6': 8000,
+  'iPad mini A17Pro': 8000,
+  'iPad Pro 9.7': 7000,
+  'iPad Pro 10.5': 9000,
+  'iPad Pro 11': 9000,
+  'iPad Pro 11 2nd': 9000,
+  'iPad Pro 11 3rd': 9000,
+  'iPad Pro 11 4th': 9000,
+  'iPad Pro 11 M4': 18000,
+  'iPad Pro 11 M5': 18000,
+  'iPad Pro 12.9 1st': 9000,
+  'iPad Pro 12.9 2nd': 9000,
+  'iPad Pro 12.9 3rd': 9500,
+  'iPad Pro 12.9 4th': 9500,
+  'iPad Pro 12.9 5th': 10000,
+  'iPad Pro 12.9 6th': 10000,
+  'iPad Pro 13 M4': 18000,
+  'iPad Pro 13 M5': 18000,
+};
+
+const IPAD_CHARGE = {
+  'iPad 1st': 7500,
+  'iPad 2nd': 7500,
+  'iPad 3rd': 7500,
+  'iPad 4th': 7500,
+  'iPad 5th': 7500,
+  'iPad 6th': 7500,
+  'iPad 7th': 7500,
+  'iPad 8th': 7500,
+  'iPad 9th': 7500,
+  'iPad 10th': 9000,
+  'iPad A16': 9000,
+  'iPad Air': 7500,
+  'iPad Air2': 7500,
+  'iPad Air3': 9000,
+  'iPad Air4': 8500,
+  'iPad Air5': 8500,
+  'iPad Air 11(M2)': 9500,
+  'iPad Air 13(M2)': 11000,
+  'iPad Air 11(M3)': 9500,
+  'iPad Air 13(M3)': 11000,
+  'iPad mini': 7500,
+  'iPad mini2': 7500,
+  'iPad mini3': 7500,
+  'iPad mini4': 7500,
+  'iPad mini5': 7500,
+  'iPad mini6': 8500,
+  'iPad mini A17Pro': 8500,
+  'iPad Pro 9.7': 9000,
+  'iPad Pro 10.5': 9000,
+  'iPad Pro 11': 8000,
+  'iPad Pro 11 2nd': 8000,
+  'iPad Pro 11 3rd': 8500,
+  'iPad Pro 11 4th': 8500,
+  'iPad Pro 11 M4': 12000,
+  'iPad Pro 12.9 1st': 9500,
+  'iPad Pro 12.9 2nd': 9500,
+  'iPad Pro 12.9 3rd': 8000,
+  'iPad Pro 12.9 4th': 8000,
+  'iPad Pro 12.9 5th': 8500,
+  'iPad Pro 12.9 6th': 8500,
+  'iPad Pro 13 M4': 12000,
+};
+
+const IPAD_FRONT_CAMERA = {
+  'iPad 1st': 5800,
+  'iPad 2nd': 5800,
+  'iPad 3rd': 5800,
+  'iPad 4th': 5800,
+  'iPad 5th': 7500,
+  'iPad 6th': 7500,
+  'iPad 7th': 7500,
+  'iPad 8th': 7500,
+  'iPad 9th': 7500,
+  'iPad 10th': 9000,
+  'iPad A16': 9000,
+  'iPad Air': 7500,
+  'iPad Air2': 7500,
+  'iPad Air3': 8000,
+  'iPad Air4': 8000,
+  'iPad Air5': 8000,
+  'iPad Air 11(M2)': 10000,
+  'iPad Air 13(M2)': 10000,
+  'iPad Air 11(M3)': 10000,
+  'iPad Air 13(M3)': 10000,
+  'iPad mini': 7500,
+  'iPad mini2': 7500,
+  'iPad mini3': 7500,
+  'iPad mini4': 7500,
+  'iPad mini5': 7500,
+  'iPad mini6': 8000,
+  'iPad mini A17Pro': 8000,
+  'iPad Pro 9.7': 7000,
+  'iPad Pro 10.5': 9000,
+  'iPad Pro 11': 8500,
+  'iPad Pro 11 2nd': 8500,
+  'iPad Pro 11 3rd': 8500,
+  'iPad Pro 11 4th': 8500,
+  'iPad Pro 11 M4': 13000,
+  'iPad Pro 12.9 1st': 9500,
+  'iPad Pro 12.9 2nd': 9500,
+  'iPad Pro 12.9 3rd': 8500,
+  'iPad Pro 12.9 4th': 8500,
+  'iPad Pro 12.9 5th': 8500,
+  'iPad Pro 12.9 6th': 8500,
+  'iPad Pro 13 M4': 13000,
+};
+
+const IPAD_CAMERA = {
+  'iPad 1st': 5800,
+  'iPad 2nd': 5800,
+  'iPad 3rd': 5800,
+  'iPad 4th': 5800,
+  'iPad 5th': 7500,
+  'iPad 6th': 7500,
+  'iPad 7th': 7500,
+  'iPad 8th': 7500,
+  'iPad 9th': 7500,
+  'iPad 10th': 7500,
+  'iPad A16': 7500,
+  'iPad Air': 7500,
+  'iPad Air2': 7500,
+  'iPad Air3': 8000,
+  'iPad Air4': 8000,
+  'iPad Air5': 8000,
+  'iPad Air 11(M2)': 9500,
+  'iPad Air 13(M2)': 9500,
+  'iPad Air 11(M3)': 9500,
+  'iPad Air 13(M3)': 9500,
+  'iPad mini': 7500,
+  'iPad mini2': 7500,
+  'iPad mini3': 7500,
+  'iPad mini4': 7500,
+  'iPad mini5': 7500,
+  'iPad mini6': 7500,
+  'iPad mini A17Pro': 7500,
+  'iPad Pro 9.7': 8000,
+  'iPad Pro 10.5': 9000,
+  'iPad Pro 11': 8500,
+  'iPad Pro 11 2nd': 8500,
+  'iPad Pro 11 3rd': 8500,
+  'iPad Pro 11 4th': 8500,
+  'iPad Pro 11 M4': 15000,
+  'iPad Pro 12.9 1st': 9500,
+  'iPad Pro 12.9 2nd': 9500,
+  'iPad Pro 12.9 3rd': 8500,
+  'iPad Pro 12.9 4th': 8500,
+  'iPad Pro 12.9 5th': 8500,
+  'iPad Pro 12.9 6th': 8500,
+  'iPad Pro 13 M4': 15000,
+};
+
+const IPAD_HOME_BUTTON = {
+  'iPad 1st': 6000,
+  'iPad 2nd': 6000,
+  'iPad 3rd': 6000,
+  'iPad 4th': 6000,
+  'iPad 5th': 6000,
+  'iPad 6th': 6000,
+  'iPad 7th': 6000,
+  'iPad 8th': 6000,
+  'iPad 9th': 6000,
+  'iPad Air': 6000,
+  'iPad Air2': 6000,
+  'iPad Air3': 6000,
+  'iPad mini': 6000,
+  'iPad mini2': 6000,
+  'iPad mini3': 6000,
+  'iPad mini4': 6000,
+  'iPad mini5': 6000,
+  'iPad Pro 9.7': 6000,
+  'iPad Pro 10.5': 6000,
+  'iPad Pro 12.9 1st': 7000,
+  'iPad Pro 12.9 2nd': 7000,
+};
+
+const IPAD_TOP_BUTTON = {
+  'iPad 1st': 7000,
+  'iPad 2nd': 7000,
+  'iPad 3rd': 7000,
+  'iPad 4th': 7000,
+  'iPad 5th': 7000,
+  'iPad 6th': 7000,
+  'iPad 7th': 7000,
+  'iPad 8th': 7000,
+  'iPad 9th': 7000,
+  'iPad 10th': 7000,
+  'iPad A16': 7000,
+  'iPad Air': 7000,
+  'iPad Air2': 7000,
+  'iPad Air3': 9000,
+  'iPad Air4': 7000,
+  'iPad Air5': 7000,
+  'iPad Air 11(M2)': 9000,
+  'iPad Air 13(M2)': 10000,
+  'iPad Air 11(M3)': 9000,
+  'iPad Air 13(M3)': 10000,
+  'iPad mini': 7000,
+  'iPad mini2': 7000,
+  'iPad mini3': 7000,
+  'iPad mini4': 7000,
+  'iPad mini5': 7000,
+  'iPad mini6': 7000,
+  'iPad mini A17Pro': 7000,
+  'iPad Pro 9.7': 7000,
+  'iPad Pro 10.5': 10000,
+  'iPad Pro 11': 7000,
+  'iPad Pro 11 2nd': 7000,
+  'iPad Pro 11 3rd': 8000,
+  'iPad Pro 11 4th': 8000,
+  'iPad Pro 11 M4': 10000,
+  'iPad Pro 12.9 1st': 8000,
+  'iPad Pro 12.9 2nd': 8000,
+  'iPad Pro 12.9 3rd': 8000,
+  'iPad Pro 12.9 4th': 8000,
+  'iPad Pro 12.9 5th': 9000,
+  'iPad Pro 12.9 6th': 9000,
+  'iPad Pro 13 M4': 13000,
+};
+
+const IPAD_HEADPHONE_JACK = {
+  'iPad 1st': 7000,
+  'iPad 2nd': 7000,
+  'iPad 3rd': 7000,
+  'iPad 4th': 7000,
+  'iPad 5th': 7000,
+  'iPad 6th': 7000,
+  'iPad 7th': 7000,
+  'iPad 8th': 7000,
+  'iPad 9th': 7000,
+  'iPad Air': 7000,
+  'iPad Air2': 7000,
+  'iPad Air3': 7000,
+  'iPad mini': 7000,
+  'iPad mini2': 7000,
+  'iPad mini3': 7000,
+  'iPad mini4': 7000,
+  'iPad mini5': 7000,
+  'iPad Pro 9.7': 8000,
+  'iPad Pro 10.5': 8000,
+  'iPad Pro 12.9 1st': 8000,
+  'iPad Pro 12.9 2nd': 8000,
+};
+
+const IPAD_SPEAKER = {
+  'iPad 1st': 7000,
+  'iPad 2nd': 7000,
+  'iPad 3rd': 7000,
+  'iPad 4th': 7000,
+  'iPad 5th': 7000,
+  'iPad 6th': 7000,
+  'iPad 7th': 7000,
+  'iPad 8th': 7000,
+  'iPad 9th': 7000,
+  'iPad 10th': 7000,
+  'iPad A16': 7000,
+  'iPad Air': 7000,
+  'iPad Air2': 7000,
+  'iPad Air3': 8000,
+  'iPad Air4': 9000,
+  'iPad Air5': 9000,
+  'iPad Air 11(M2)': 9000,
+  'iPad Air 13(M2)': 14000,
+  'iPad Air 11(M3)': 9000,
+  'iPad Air 13(M3)': 14000,
+  'iPad mini': 7000,
+  'iPad mini2': 7000,
+  'iPad mini3': 7000,
+  'iPad mini4': 7000,
+  'iPad mini5': 7000,
+  'iPad mini6': 9000,
+  'iPad mini A17Pro': 9000,
+  'iPad Pro 9.7': 7000,
+  'iPad Pro 10.5': 9000,
+  'iPad Pro 11': 8000,
+  'iPad Pro 11 2nd': 8000,
+  'iPad Pro 11 3rd': 10000,
+  'iPad Pro 11 4th': 10000,
+  'iPad Pro 11 M4': 15000,
+  'iPad Pro 12.9 1st': 10000,
+  'iPad Pro 12.9 2nd': 10000,
+  'iPad Pro 12.9 3rd': 9500,
+  'iPad Pro 12.9 4th': 9500,
+  'iPad Pro 12.9 5th': 12000,
+  'iPad Pro 12.9 6th': 12000,
+  'iPad Pro 13 M4': 15000,
+};
+
+// iPad修理は提携工場経由のため、全項目に一律サーチャージを加算
+const IPAD_SURCHARGE = 0;
+function withSurcharge(obj, amount){
+  const out = {};
+  for(const k in obj){ out[k] = obj[k] + amount; }
+  return out;
+}
+
+const ANDROID_SCREEN = {
+  'Ascend G620S': 14400,
+  'Lumiere 503HW': 14400,
+  'honor 6 Plus': 14400,
+  'honor 8': 15400,
+  'honor 9': 15400,
+  'nova': 15400,
+  'nova2': 15400,
+  'nova3': 15400,
+  'nova lite': 14400,
+  'nova lite 2': 15400,
+  'nova lite 3': 15400,
+  'nova 5T': 19400,
+  'P8 lite': 15400,
+  'P8 max': 18400,
+  'P9': 17400,
+  'P9 lite': 15400,
+  'P10': 18400,
+  'P10 lite': 15400,
+  'P10 Plus': 22400,
+  'P20': 21400,
+  'P20 lite': 16400,
+  'P20 pro': 31400,
+  'P30': 36400,
+  'P30 lite': 16400,
+  'P30 Pro': 45400,
+  'HUAWEI Mate 9': 19400,
+  'HUAWEI Mate 10 lite': 15400,
+  'HUAWEI Mate 10': 18400,
+  'HUAWEI Mate 10 Pro': 23400,
+  'HUAWEI Mate 20 lite': 17400,
+  'HUAWEI Mate 20': 35400,
+  'HUAWEI Mate 20 Pro': 39400,
+  'MediaPad T1 7': 13400,
+  'MediaPad T1 10': 16400,
+  'MediaPad T2 10': 17400,
+  'MediaPad T2 7': 15400,
+  'MediaPad T3 7': 15400,
+  'MediaPad T3 8': 15400,
+  'MediaPad T3 10': 20400,
+  'Mediapad T5 10': 19400,
+  'MediaPad M2 8': 15400,
+  'MediaPad M3 lite': 17400,
+  'MediaPad M3 lite 10 wp': 21400,
+  'Mediapad M5': 22400,
+  'MediaPad M5 lite': 21400,
+  'MediaPad M5 Pro': 23400,
+  'MediaPad M5 10': 25400,
+  'MediaPad M5 lite 8': 21400,
+  'ZenFone 5 (A500KL)': 14400,
+  'ZenFone 2 (ZE551ML)': 15400,
+  'ZenFone 2 Laser (ZE500KL)': 14400,
+  'ZenFone Selfie (ZD551KL)': 14400,
+  'ZenFone Zoom (ZX551ML)': 15400,
+  'ZenFone Max (ZC550KL)': 15400,
+  'ZenFone Go (ZB551KL)': 15400,
+  'ZenFone 3 (ZE520KL)': 15400,
+  'ZenFone 3 (ZE552KL)': 15400,
+  'ZenFone 3 Deluxe (ZS570KL)': 18400,
+  'ZenFone 3 Laser (ZC551KL)': 15400,
+  'Zenfone 3 Ultra': 20400,
+  'ZenFone 3 Max (ZC520TL)': 15400,
+  'ZenFone 3 Max (ZC553KL)': 16400,
+  'ZenFone AR (ZS571KL)': 15400,
+  'ZenFone Live (ZB501KL)': 14400,
+  'ZenFone 4 (ZE554KL)': 15400,
+  'ZenFone 4 Selfie Pro (ZD552KL)': 19400,
+  'ZenFone 4 Pro (ZS551KL)': 18400,
+  'ZenFone 4 Max (ZC520KL)': 15400,
+  'ZenFone 4 Selfie (ZD553KL)': 19400,
+  'ZenFone Max Plus M1 (ZB570TL)': 17400,
+  'ZenFone 5 (ZE620KL)': 22400,
+  'ZenFone 5Q (ZC600KL)': 18400,
+  'ZenFone 5Z (ZS620KL)': 22400,
+  'ZenFone Max M1 (ZB555KL)': 16400,
+  'ROG Phone (ZS600KL)': 24400,
+  'ZenFone Live L1 (ZA550KL)': 18400,
+  'ZenFone Max Pro M1 (ZB602KL)': 16400,
+  'ZenFone Max M2 (ZB633KL)': 15400,
+  'ZenFone Max Pro M2 (ZB631KL)': 18400,
+  'Zenfone 6 (ZS630KL)': 19400,
+  'ZenPad 7.0 (Z370C)': 15400,
+  'ZenPad 10 (Z300C)': 20400,
+  'ZenPad 8.0 (Z380C)': 17400,
+  'ZenPad 8.0 (Z380KL)': 17400,
+  'ZenPad 3 8.0 (Z581KL)': 18400,
+  'ZenPad 3S 10 (Z500KL)': 20400,
+  'ZenPad 10 (Z301M)': 19400,
+  'Galaxy S7 edge': 26400,
+  'Galaxy S8': 26400,
+  'Galaxy S8+': 30400,
+  'Galaxy S9': 26400,
+  'Galaxy S9+': 27400,
+  'Galaxy S10': 32400,
+  'Galaxy S10+': 36400,
+  'Galaxy S20 5G': 33400,
+  'Galaxy S20+ 5G': 36400,
+  'Galaxy S20 Ultra 5G': 40400,
+  'Galaxy S21 5G': 32400,
+  'Galaxy S21+ 5G': 33400,
+  'Galaxy S21 Ultra 5G': 46400,
+  'Galaxy S22': 38400,
+  'Galaxy S22+': 37400,
+  'Galaxy S22 Ultra': 49400,
+  'Galaxy S23': 36400,
+  'Galaxy S23+': 34400,
+  'Galaxy S23 Ultra': 49400,
+  'Galaxy S23 FE': 32400,
+  'Galaxy S24': 36400,
+  'Galaxy S24+': 39400,
+  'Galaxy S24 Ultra': 51400,
+  'Galaxy Note8': 31400,
+  'Galaxy Note9': 34400,
+  'Galaxy Note10 Plus': 40400,
+  'Galaxy Note20 Ultra': 46400,
+  'Galaxy A7': 16400,
+  'Galaxy A20': 16400,
+  'Galaxy A21': 16400,
+  'Galaxy A22 5G': 16400,
+  'Galaxy A23 5G': 19400,
+  'Galaxy A30': 20400,
+  'Galaxy A32 5G': 19400,
+  'Galaxy A41': 22400,
+  'Galaxy A51 5G': 23400,
+  'Galaxy A52 5G': 23400,
+  'Galaxy A53 5G': 24400,
+  'Galaxy A54 5G': 26400,
+  'Galaxy A55 5G': 36400,
+  'Galaxy Z Fold 5G': 103400,
+  'Galaxy Z Fold2 5G': 107600,
+  'Galaxy Z Fold3 5G': 102600,
+  'Galaxy Z Fold4 5G': 104600,
+  'Galaxy Z Fold5 5G': 105600,
+  'Galaxy Z Flip 5G': 79400,
+  'Galaxy Z Flip3 5G': 56400,
+  'Galaxy Z Flip4 5G': 65400,
+  'Galaxy Z Flip5 5G': 94600,
+  'Xperia X Performance': 14400,
+  'Xperia X Compact': 14400,
+  'Xperia XZ': 14400,
+  'Xperia XZs': 14400,
+  'Xperia XZ Premium': 15400,
+  'Xperia XZ1': 15400,
+  'Xperia XZ1 Compact': 16400,
+  'Xperia XZ2': 16400,
+  'Xperia XZ2 Compact': 16400,
+  'Xperia XZ2 Premium': 21400,
+  'Xperia XZ3': 21400,
+  'Xperia 1': 19400,
+  'Xperia 1Ⅱ': 26400,
+  'Xperia 1Ⅲ': 41400,
+  'Xperia 1Ⅳ': 36400,
+  'Xperia 1Ⅴ': 46400,
+  'Xperia 5': 21400,
+  'Xperia 5Ⅱ': 30400,
+  'Xperia 5 Ⅲ': 31400,
+  'Xperia 5Ⅳ': 48400,
+  'Xperia 5Ⅴ': 45400,
+  'Xperia 8/8lite': 15400,
+  'Xperia 10 Plus': 17400,
+  'Xperia 10Ⅱ': 23400,
+  'Xperia 10Ⅲ': 23400,
+  'Xperia 10Ⅳ': 27400,
+  'Xperia 10Ⅴ': 26400,
+  'Xperia 10Ⅵ': 31400,
+  'Xperia Ace': 16400,
+  'Xperia AceⅡ': 16400,
+  'Xperia AceⅢ': 16400,
+  'Xperia Pro': 26400,
+  'Xperia Pro-Ⅰ': 41400,
+  'Xperia Z2 Tablet': 23400,
+  'Xperia Z3 Tablet Compact': 27400,
+  'Xperia Z4 Tablet': 27400,
+  'arrows M04': 19400,
+  'arrows M05': 24400,
+  'arrows U/J': 17400,
+  'arrows We': 19400,
+  'arrows We 2': 22400,
+  'Rakuten mini': 14400,
+  'Rakuten Hand': 16400,
+  'Rakuten Hand2': 17400,
+  'Rakuten BIG': 30400,
+  'Rakuten BIGs': 33400,
+  'Pixel 3': 21400,
+  'Pixel 3 XL': 22400,
+  'Pixel 3a': 20400,
+  'Pixel 3a XL': 24400,
+  'Pixel 4': 21400,
+  'Pixel 4 XL': 24400,
+  'Pixel 4a': 28400,
+  'Pixel 4a 5G': 30400,
+  'Pixel 5': 32400,
+  'Pixel 5a 5G': 26400,
+  'Pixel 6': 33400,
+  'Pixel 6A': 27400,
+  'Pixel 6 Pro': 36400,
+  'Pixel 7': 33400,
+  'Pixel 7A': 30400,
+  'Pixel 7 Pro': 38400,
+  'Pixel 8': 31400,
+  'Pixel 8A': 31400,
+  'Pixel 8 Pro': 43400,
+  'Pixel 9': 36400,
+  'Pixel 9 Pro': 36400,
+  'Pixel 9 Pro XL': 48400,
+  'Pixel Fold': 124600,
+  'Mi Note 10': 21400,
+  'Mi Note 10 Lite': 21400,
+  'Mi 11 Lite 5G': 21400,
+  'Xiaomi 11T': 23400,
+  'Xiaomi 11T Pro': 23400,
+  'Redmi 9T': 16400,
+  'Redmi 12 5G': 16400,
+  'Redmi Note 9s': 16400,
+  'Redmi Note 9T': 17400,
+  'Redmi Note 9T 5G': 17400,
+  'Redmi Note 10 5G': 17400,
+  'Redmi Note 10 Pro 4G': 26400,
+  'Redmi Note 10 Pro 5G': 34400,
+  'Redmi Note 11': 26400,
+  'Redmi Note 11 Pro 5G': 29400,
+  'Redmi Note 10T': 16400,
+  'Redmi Note 10 JE': 16400,
+  'Poco F4 GT': 25400,
+  'Black Shark 2': 29400,
+  'Black Shark 3': 25400,
+  'Black Shark 4': 25400,
+  'Black Shark 4 Pro': 25400,
+  'Black Shark 5': 25400,
+  'Black Shark 5 Pro': 24400,
+  'Xiaomi Pad 5': 19400,
+  'Redmi Pad': 19400,
+  'Xiaomi Pad 6': 21400,
+  'AQUOS sence': 16400,
+  'AQUOS sence 2': 16400,
+  'AQUOS sence 3': 16400,
+  'AQUOS sence 3 basic': 16400,
+  'AQUOS sence 3 lite': 16400,
+  'AQUOS sence 3 plus': 23400,
+  'AQUOS sence 4': 18400,
+  'AQUOS sence 4 lite': 18400,
+  'AQUOS sence 4 plus': 18400,
+  'AQUOS sence 4 basic': 18400,
+  'AQUOS sence 5G': 18400,
+  'AQUOS sence 5G basic': 17400,
+  'AQUOS sence 6': 22400,
+  'AQUOS sence 6S': 22400,
+  'AQUOS sence 7': 22400,
+  'AQUOS sence 7plus': 25400,
+  'AQUOS sence 8': 22400,
+  'AQUOS R': 20400,
+  'AQUOS R2': 19400,
+  'AQUOS R3': 21400,
+  'AQUOS R5G': 21400,
+  'AQUOS R6': 26400,
+  'AQUOS R7': 28400,
+  'AQUOS R8': 65400,
+  'AQUOS R8 Pro': 66400,
+  'AQUOS R9': 69400,
+  'AQUOS zero': 23400,
+  'AQUOS zero5G basic': 23400,
+  'AQUOS zero 2': 19400,
+  'AQUOS zero 6': 23400,
+  'AQUOS Wish': 18400,
+  'AQUOS Wish2': 18400,
+  'AQUOS Wish3': 18400,
+  'AQUOS Wish4': 21400,
+  'Reno A': 20400,
+  'Reno 3 5G': 25400,
+  'Reno 3A': 23400,
+  'Reno 5A': 17400,
+  'Reno 7A': 26400,
+  'Reno 9A': 26400,
+  'Reno 10Pro': 25400,
+  'Reno 11A': 25400,
+  'Find X': 31400,
+  'Find X2 Pro': 48400,
+  'Find X3 Pro': 46400,
+  'A5 2020': 16400,
+  'A54 5G': 17400,
+  'A55s 5G': 17400,
+  'A73': 23400,
+  'A77': 17400,
+  'A79 5G': 17400,
+  'A3 5G': 18400,
+};
+
+const ANDROID_BATTERY = {
+  'Ascend G620S': 11400,
+  'Lumiere 503HW': 12400,
+  'honor 6 Plus': 12400,
+  'honor 8': 13400,
+  'honor 9': 12400,
+  'nova': 12400,
+  'nova2': 12400,
+  'nova3': 12400,
+  'nova lite': 12400,
+  'nova lite 2': 12400,
+  'nova lite 3': 12400,
+  'nova 5T': 14400,
+  'P8 lite': 12400,
+  'P8 max': 12400,
+  'P9': 12400,
+  'P9 lite': 12400,
+  'P10': 12400,
+  'P10 lite': 12400,
+  'P10 Plus': 14400,
+  'P20': 14400,
+  'P20 lite': 11400,
+  'P20 pro': 14400,
+  'P30': 16400,
+  'P30 lite': 14400,
+  'P30 Pro': 14400,
+  'HUAWEI Mate 9': 12400,
+  'HUAWEI Mate 10 lite': 14400,
+  'HUAWEI Mate 10': 14400,
+  'HUAWEI Mate 10 Pro': 15400,
+  'HUAWEI Mate 20 lite': 13400,
+  'HUAWEI Mate 20': 14400,
+  'HUAWEI Mate 20 Pro': 13400,
+  'MediaPad T1 7': 14400,
+  'MediaPad T1 10': 14400,
+  'MediaPad T2 10': 14400,
+  'MediaPad T2 7': 13400,
+  'MediaPad T3 7': 14400,
+  'MediaPad T3 8': 14400,
+  'MediaPad T3 10': 13400,
+  'Mediapad T5 10': 15400,
+  'MediaPad M2 8': 13400,
+  'MediaPad M3 lite': 13400,
+  'MediaPad M3 lite 10 wp': 14400,
+  'Mediapad M5': 14400,
+  'MediaPad M5 lite': 15400,
+  'MediaPad M5 Pro': 15400,
+  'MediaPad M5 10': 15400,
+  'MediaPad M5 lite 8': 15400,
+  'ZenFone 5 (A500KL)': 11400,
+  'ZenFone 2 (ZE551ML)': 12400,
+  'ZenFone 2 Laser (ZE500KL)': 12400,
+  'ZenFone Selfie (ZD551KL)': 12400,
+  'ZenFone Zoom (ZX551ML)': 13400,
+  'ZenFone Max (ZC550KL)': 11400,
+  'ZenFone Go (ZB551KL)': 12400,
+  'ZenFone 3 (ZE520KL)': 11400,
+  'ZenFone 3 (ZE552KL)': 11400,
+  'ZenFone 3 Deluxe (ZS570KL)': 11400,
+  'ZenFone 3 Laser (ZC551KL)': 11400,
+  'Zenfone 3 Ultra': 13400,
+  'ZenFone 3 Max (ZC520TL)': 12400,
+  'ZenFone 3 Max (ZC553KL)': 12400,
+  'ZenFone AR (ZS571KL)': 13400,
+  'ZenFone Live (ZB501KL)': 13400,
+  'ZenFone 4 (ZE554KL)': 13400,
+  'ZenFone 4 Selfie Pro (ZD552KL)': 13400,
+  'ZenFone 4 Pro (ZS551KL)': 13400,
+  'ZenFone 4 Max (ZC520KL)': 12400,
+  'ZenFone 4 Selfie (ZD553KL)': 14400,
+  'ZenFone Max Plus M1 (ZB570TL)': 13400,
+  'ZenFone 5 (ZE620KL)': 13400,
+  'ZenFone 5Q (ZC600KL)': 13400,
+  'ZenFone 5Z (ZS620KL)': 13400,
+  'ZenFone Max M1 (ZB555KL)': 13400,
+  'ROG Phone (ZS600KL)': 14400,
+  'ZenFone Live L1 (ZA550KL)': 13400,
+  'ZenFone Max Pro M1 (ZB602KL)': 13400,
+  'ZenFone Max M2 (ZB633KL)': 13400,
+  'ZenFone Max Pro M2 (ZB631KL)': 13400,
+  'Zenfone 6 (ZS630KL)': 15400,
+  'ZenPad 7.0 (Z370C)': 13400,
+  'ZenPad 10 (Z300C)': 13400,
+  'ZenPad 8.0 (Z380C)': 13400,
+  'ZenPad 8.0 (Z380KL)': 13400,
+  'ZenPad 3 8.0 (Z581KL)': 13400,
+  'ZenPad 3S 10 (Z500KL)': 15400,
+  'ZenPad 10 (Z301M)': 15400,
+  'Galaxy S7 edge': 12400,
+  'Galaxy S8': 12400,
+  'Galaxy S8+': 12400,
+  'Galaxy S9': 12400,
+  'Galaxy S9+': 12400,
+  'Galaxy S10': 12400,
+  'Galaxy S10+': 12400,
+  'Galaxy S20 5G': 13400,
+  'Galaxy S20+ 5G': 13400,
+  'Galaxy S20 Ultra 5G': 13400,
+  'Galaxy S21 5G': 13400,
+  'Galaxy S21+ 5G': 13400,
+  'Galaxy S21 Ultra 5G': 13400,
+  'Galaxy S22': 13400,
+  'Galaxy S22+': 13400,
+  'Galaxy S22 Ultra': 13400,
+  'Galaxy S23': 13400,
+  'Galaxy S23+': 13400,
+  'Galaxy S23 Ultra': 13400,
+  'Galaxy S23 FE': 13400,
+  'Galaxy S24': 13400,
+  'Galaxy S24+': 13400,
+  'Galaxy S24 Ultra': 13400,
+  'Galaxy Note8': 12400,
+  'Galaxy Note9': 12400,
+  'Galaxy Note10 Plus': 13400,
+  'Galaxy Note20 Ultra': 14400,
+  'Galaxy A7': 12400,
+  'Galaxy A20': 12400,
+  'Galaxy A21': 12400,
+  'Galaxy A22 5G': 12400,
+  'Galaxy A23 5G': 12400,
+  'Galaxy A30': 12400,
+  'Galaxy A32 5G': 12400,
+  'Galaxy A41': 12400,
+  'Galaxy A51 5G': 12400,
+  'Galaxy A52 5G': 12400,
+  'Galaxy A53 5G': 12400,
+  'Galaxy A54 5G': 12400,
+  'Galaxy A55 5G': 12400,
+  'Galaxy Z Fold 5G': 19400,
+  'Galaxy Z Fold2 5G': 19400,
+  'Galaxy Z Fold3 5G': 19400,
+  'Galaxy Z Fold4 5G': 19400,
+  'Galaxy Z Fold5 5G': 19400,
+  'Galaxy Z Flip 5G': 18400,
+  'Galaxy Z Flip3 5G': 18400,
+  'Galaxy Z Flip4 5G': 18400,
+  'Galaxy Z Flip5 5G': 18400,
+  'Xperia X Performance': 12400,
+  'Xperia X Compact': 12400,
+  'Xperia XZ': 12400,
+  'Xperia XZs': 12400,
+  'Xperia XZ Premium': 12400,
+  'Xperia XZ1': 12400,
+  'Xperia XZ1 Compact': 12400,
+  'Xperia XZ2': 12400,
+  'Xperia XZ2 Compact': 12400,
+  'Xperia XZ2 Premium': 12400,
+  'Xperia XZ3': 12400,
+  'Xperia 1': 12400,
+  'Xperia 1Ⅱ': 12400,
+  'Xperia 1Ⅲ': 12400,
+  'Xperia 1Ⅳ': 12400,
+  'Xperia 1Ⅴ': 12400,
+  'Xperia 1Ⅵ': 13400,
+  'Xperia 5': 12400,
+  'Xperia 5Ⅱ': 12400,
+  'Xperia 5 Ⅲ': 12400,
+  'Xperia 5Ⅳ': 13400,
+  'Xperia 5Ⅴ': 13400,
+  'Xperia 8/8lite': 11400,
+  'Xperia 10 Plus': 12400,
+  'Xperia 10Ⅱ': 12400,
+  'Xperia 10Ⅲ': 12400,
+  'Xperia 10Ⅳ': 12400,
+  'Xperia 10Ⅴ': 12400,
+  'Xperia 10Ⅵ': 12400,
+  'Xperia Ace': 12400,
+  'Xperia AceⅡ': 12400,
+  'Xperia AceⅢ': 12400,
+  'Xperia Pro': 13400,
+  'Xperia Pro-Ⅰ': 14400,
+  'Xperia Z2 Tablet': 15400,
+  'Xperia Z3 Tablet Compact': 13400,
+  'Xperia Z4 Tablet': 13400,
+  'arrows M04': 12400,
+  'arrows M05': 12400,
+  'arrows U/J': 12400,
+  'arrows We': 12400,
+  'Rakuten mini': 11400,
+  'Rakuten Hand': 11400,
+  'Rakuten Hand2': 11400,
+  'Rakuten BIG': 12400,
+  'Rakuten BIGs': 17400,
+  'Pixel 3': 13400,
+  'Pixel 3 XL': 13400,
+  'Pixel 3a': 13400,
+  'Pixel 3a XL': 13400,
+  'Pixel 4': 13400,
+  'Pixel 4 XL': 13400,
+  'Pixel 4a': 13400,
+  'Pixel 4a 5G': 13400,
+  'Pixel 5': 13400,
+  'Pixel 5a 5G': 13400,
+  'Pixel 6': 13400,
+  'Pixel 6A': 13400,
+  'Pixel 6 Pro': 15400,
+  'Pixel 7': 13400,
+  'Pixel 7A': 13400,
+  'Pixel 7 Pro': 15400,
+  'Pixel 8': 13400,
+  'Pixel 8A': 13400,
+  'Pixel 8 Pro': 18400,
+  'Pixel 9': 19400,
+  'Pixel 9 Pro': 19400,
+  'Pixel 9 Pro XL': 19400,
+  'Pixel Fold': 20400,
+  'Mi Note 10': 12400,
+  'Mi Note 10 Lite': 12400,
+  'Mi 11 Lite 5G': 13400,
+  'Xiaomi 11T': 13400,
+  'Xiaomi 11T Pro': 13400,
+  'Redmi 9T': 12400,
+  'Redmi 12 5G': 12400,
+  'Redmi Note 9s': 12400,
+  'Redmi Note 9T': 12400,
+  'Redmi Note 9T 5G': 12400,
+  'Redmi Note 10 5G': 13400,
+  'Redmi Note 10 Pro 4G': 13400,
+  'Redmi Note 10 Pro 5G': 13400,
+  'Redmi Note 11': 14400,
+  'Redmi Note 11 Pro 5G': 14400,
+  'Redmi Note 10T': 12400,
+  'Redmi Note 10 JE': 12400,
+  'Poco F4 GT': 13400,
+  'Black Shark 2': 14400,
+  'Black Shark 3': 18400,
+  'Black Shark 4': 18400,
+  'Black Shark 4 Pro': 19400,
+  'Black Shark 5': 18400,
+  'Black Shark 5 Pro': 19400,
+  'Xiaomi Pad 5': 14400,
+  'Redmi Pad': 14400,
+  'Xiaomi Pad 6': 14400,
+  'AQUOS sence': 12400,
+  'AQUOS sence 2': 12400,
+  'AQUOS sence 3': 12400,
+  'AQUOS sence 3 basic': 12400,
+  'AQUOS sence 3 lite': 12400,
+  'AQUOS sence 3 plus': 12400,
+  'AQUOS sence 4': 12400,
+  'AQUOS sence 4 lite': 12400,
+  'AQUOS sence 4 plus': 12400,
+  'AQUOS sence 4 basic': 12400,
+  'AQUOS sence 5G': 12400,
+  'AQUOS sence 5G basic': 12400,
+  'AQUOS sence 6': 12400,
+  'AQUOS sence 6S': 12400,
+  'AQUOS sence 7': 14400,
+  'AQUOS sence 7plus': 14400,
+  'AQUOS R': 12400,
+  'AQUOS R2': 12400,
+  'AQUOS R3': 12400,
+  'AQUOS R5G': 12400,
+  'AQUOS R6': 15400,
+  'AQUOS R7': 14400,
+  'AQUOS R8': 14400,
+  'AQUOS R8 Pro': 14400,
+  'AQUOS R9': 14400,
+  'AQUOS zero': 12400,
+  'AQUOS zero5G basic': 12400,
+  'AQUOS zero 2': 12400,
+  'AQUOS zero 6': 13400,
+  'AQUOS Wish': 12400,
+  'AQUOS Wish2': 12400,
+  'AQUOS Wish3': 12400,
+  'AQUOS Wish4': 14400,
+  'Reno A': 12400,
+  'Reno 3 5G': 13400,
+  'Reno 3A': 12400,
+  'Reno 5A': 12400,
+  'Reno 7A': 12400,
+  'Reno 9A': 12400,
+  'Reno 10Pro': 13400,
+  'Reno 11A': 13400,
+  'Find X': 12400,
+  'Find X2 Pro': 12400,
+  'Find X3 Pro': 13400,
+  'A5 2020': 12400,
+  'A54 5G': 12400,
+  'A55s 5G': 13400,
+  'A73': 13400,
+  'A77': 12400,
+  'A79 5G': 12400,
+  'A3 5G': 12400,
+};
+
+const ANDROID_CHARGE = {
+  'Ascend G620S': 11400,
+  'Lumiere 503HW': 11400,
+  'honor 6 Plus': 11400,
+  'honor 8': 11400,
+  'honor 9': 11400,
+  'nova': 11400,
+  'nova2': 11400,
+  'nova3': 11400,
+  'nova lite': 11400,
+  'nova lite 2': 12400,
+  'nova lite 3': 15400,
+  'nova 5T': 14400,
+  'P8 lite': 12400,
+  'P8 max': 12400,
+  'P9': 12400,
+  'P9 lite': 12400,
+  'P10': 13400,
+  'P10 lite': 12400,
+  'P10 Plus': 15400,
+  'P20': 15400,
+  'P20 lite': 13400,
+  'P20 pro': 16400,
+  'P30': 14400,
+  'P30 lite': 14400,
+  'P30 Pro': 16400,
+  'HUAWEI Mate 9': 15400,
+  'HUAWEI Mate 10 lite': 15400,
+  'HUAWEI Mate 10': 15400,
+  'HUAWEI Mate 10 Pro': 17400,
+  'HUAWEI Mate 20 lite': 16400,
+  'HUAWEI Mate 20': 18400,
+  'HUAWEI Mate 20 Pro': 18400,
+  'MediaPad T1 7': 13400,
+  'MediaPad T1 10': 14400,
+  'MediaPad T2 10': 14400,
+  'MediaPad T2 7': 13400,
+  'MediaPad T3 7': 14400,
+  'MediaPad T3 8': 13400,
+  'MediaPad T3 10': 14400,
+  'Mediapad T5 10': 14400,
+  'MediaPad M2 8': 13400,
+  'MediaPad M3 lite': 14400,
+  'MediaPad M3 lite 10 wp': 15400,
+  'Mediapad M5': 13400,
+  'MediaPad M5 lite': 14400,
+  'MediaPad M5 Pro': 14400,
+  'MediaPad M5 10': 15400,
+  'MediaPad M5 lite 8': 15400,
+  'ZenFone 5 (A500KL)': 11400,
+  'ZenFone 2 (ZE551ML)': 11400,
+  'ZenFone 2 Laser (ZE500KL)': 11400,
+  'ZenFone Selfie (ZD551KL)': 11400,
+  'ZenFone Zoom (ZX551ML)': 12400,
+  'ZenFone Max (ZC550KL)': 11400,
+  'ZenFone Go (ZB551KL)': 12400,
+  'ZenFone 3 (ZE520KL)': 11400,
+  'ZenFone 3 (ZE552KL)': 13400,
+  'ZenFone 3 Deluxe (ZS570KL)': 12400,
+  'ZenFone 3 Laser (ZC551KL)': 12400,
+  'Zenfone 3 Ultra': 13400,
+  'ZenFone 3 Max (ZC520TL)': 13400,
+  'ZenFone 3 Max (ZC553KL)': 13400,
+  'ZenFone AR (ZS571KL)': 12400,
+  'ZenFone Live (ZB501KL)': 11400,
+  'ZenFone 4 (ZE554KL)': 12400,
+  'ZenFone 4 Selfie Pro (ZD552KL)': 15400,
+  'ZenFone 4 Pro (ZS551KL)': 15400,
+  'ZenFone 4 Max (ZC520KL)': 13400,
+  'ZenFone 4 Selfie (ZD553KL)': 16400,
+  'ZenFone Max Plus M1 (ZB570TL)': 13400,
+  'ZenFone 5 (ZE620KL)': 13400,
+  'ZenFone 5Q (ZC600KL)': 15400,
+  'ZenFone 5Z (ZS620KL)': 15400,
+  'ZenFone Max M1 (ZB555KL)': 15400,
+  'ROG Phone (ZS600KL)': 16400,
+  'ZenFone Live L1 (ZA550KL)': 15400,
+  'ZenFone Max Pro M1 (ZB602KL)': 15400,
+  'ZenFone Max M2 (ZB633KL)': 13400,
+  'ZenFone Max Pro M2 (ZB631KL)': 15400,
+  'Zenfone 6 (ZS630KL)': 14400,
+  'ZenPad 7.0 (Z370C)': 13400,
+  'ZenPad 10 (Z300C)': 13400,
+  'ZenPad 8.0 (Z380C)': 13400,
+  'ZenPad 8.0 (Z380KL)': 13400,
+  'ZenPad 3 8.0 (Z581KL)': 13400,
+  'ZenPad 3S 10 (Z500KL)': 13400,
+  'ZenPad 10 (Z301M)': 13400,
+  'Galaxy S7 edge': 16400,
+  'Galaxy S8': 15400,
+  'Galaxy S8+': 15400,
+  'Galaxy S9': 15400,
+  'Galaxy S9+': 16400,
+  'Galaxy S10': 16400,
+  'Galaxy S10+': 16400,
+  'Galaxy S20 5G': 14400,
+  'Galaxy S20+ 5G': 14400,
+  'Galaxy S20 Ultra 5G': 14400,
+  'Galaxy S21 5G': 14400,
+  'Galaxy S21+ 5G': 14400,
+  'Galaxy S21 Ultra 5G': 14400,
+  'Galaxy S22': 16400,
+  'Galaxy S22+': 16400,
+  'Galaxy S22 Ultra': 16400,
+  'Galaxy S23': 16400,
+  'Galaxy S23+': 16400,
+  'Galaxy S23 Ultra': 16400,
+  'Galaxy S23 FE': 16400,
+  'Galaxy S24': 16400,
+  'Galaxy S24+': 16400,
+  'Galaxy S24 Ultra': 16400,
+  'Galaxy Note8': 15400,
+  'Galaxy Note9': 15400,
+  'Galaxy Note10 Plus': 15400,
+  'Galaxy Note20 Ultra': 16400,
+  'Galaxy A7': 11400,
+  'Galaxy A20': 12400,
+  'Galaxy A21': 12400,
+  'Galaxy A22 5G': 12400,
+  'Galaxy A23 5G': 12400,
+  'Galaxy A30': 14400,
+  'Galaxy A32 5G': 14400,
+  'Galaxy A41': 14400,
+  'Galaxy A51 5G': 14400,
+  'Galaxy A52 5G': 14400,
+  'Galaxy A53 5G': 14400,
+  'Galaxy A54 5G': 14400,
+  'Galaxy A55 5G': 14400,
+  'Xperia X Performance': 12400,
+  'Xperia X Compact': 12400,
+  'Xperia XZ': 13400,
+  'Xperia XZs': 13400,
+  'Xperia XZ Premium': 14400,
+  'Xperia XZ1': 12400,
+  'Xperia XZ1 Compact': 13400,
+  'Xperia XZ2': 13400,
+  'Xperia XZ2 Compact': 13400,
+  'Xperia XZ2 Premium': 13400,
+  'Xperia XZ3': 14400,
+  'Xperia 1': 14400,
+  'Xperia 1Ⅱ': 14400,
+  'Xperia 1Ⅲ': 14400,
+  'Xperia 1Ⅳ': 14400,
+  'Xperia 1Ⅴ': 14400,
+  'Xperia 1Ⅵ': 16400,
+  'Xperia 5': 13400,
+  'Xperia 5Ⅱ': 14400,
+  'Xperia 5 Ⅲ': 14400,
+  'Xperia 5Ⅳ': 14400,
+  'Xperia 5Ⅴ': 16400,
+  'Xperia 8/8lite': 14400,
+  'Xperia 10 Plus': 13400,
+  'Xperia 10Ⅱ': 14400,
+  'Xperia 10Ⅲ': 14400,
+  'Xperia 10Ⅳ': 14400,
+  'Xperia 10Ⅴ': 14400,
+  'Xperia 10Ⅵ': 14400,
+  'Xperia Ace': 13400,
+  'Xperia AceⅡ': 13400,
+  'Xperia AceⅢ': 13400,
+  'Xperia Pro': 14400,
+  'Xperia Pro-Ⅰ': 14400,
+  'Xperia Z2 Tablet': 13400,
+  'Xperia Z3 Tablet Compact': 13400,
+  'Xperia Z4 Tablet': 14400,
+  'arrows M04': 15400,
+  'arrows M05': 15400,
+  'arrows U/J': 13400,
+  'arrows We': 13400,
+  'arrows We 2': 13400,
+  'Rakuten mini': 11400,
+  'Rakuten Hand': 11400,
+  'Rakuten Hand2': 11400,
+  'Rakuten BIG': 14400,
+  'Rakuten BIGs': 14400,
+  'Pixel 3': 14400,
+  'Pixel 3 XL': 14400,
+  'Pixel 3a': 14400,
+  'Pixel 3a XL': 14400,
+  'Pixel 4': 15400,
+  'Pixel 4 XL': 15400,
+  'Pixel 4a': 16400,
+  'Pixel 4a 5G': 16400,
+  'Pixel 5': 16400,
+  'Pixel 5a 5G': 16400,
+  'Pixel 6': 16400,
+  'Pixel 6A': 16400,
+  'Pixel 6 Pro': 16400,
+  'Pixel 7': 16400,
+  'Pixel 7A': 16400,
+  'Pixel 7 Pro': 19400,
+  'Pixel 8': 16400,
+  'Pixel 8A': 16400,
+  'Pixel 8 Pro': 19400,
+  'Pixel 9': 19400,
+  'Pixel 9 Pro': 19400,
+  'Pixel 9 Pro XL': 19400,
+  'Pixel Fold': 19400,
+  'Mi Note 10': 16400,
+  'Mi Note 10 Lite': 13400,
+  'Mi 11 Lite 5G': 13400,
+  'Xiaomi 11T': 14400,
+  'Xiaomi 11T Pro': 14400,
+  'Redmi 9T': 12400,
+  'Redmi 12 5G': 13400,
+  'Redmi Note 9s': 14400,
+  'Redmi Note 9T': 12400,
+  'Redmi Note 9T 5G': 12400,
+  'Redmi Note 10 5G': 13400,
+  'Redmi Note 10 Pro 4G': 17400,
+  'Redmi Note 10 Pro 5G': 17400,
+  'Redmi Note 11': 14400,
+  'Redmi Note 11 Pro 5G': 16400,
+  'Redmi Note 10T': 14400,
+  'Redmi Note 10 JE': 14400,
+  'Poco F4 GT': 15400,
+  'Black Shark 2': 15400,
+  'Black Shark 3': 15400,
+  'Black Shark 4': 17600,
+  'Black Shark 4 Pro': 20600,
+  'Black Shark 5': 17600,
+  'Black Shark 5 Pro': 17600,
+  'AQUOS sence': 12400,
+  'AQUOS sence 2': 12400,
+  'AQUOS sence 3': 12400,
+  'AQUOS sence 3 basic': 12400,
+  'AQUOS sence 3 lite': 12400,
+  'AQUOS sence 3 plus': 12400,
+  'AQUOS sence 4': 13400,
+  'AQUOS sence 4 lite': 13400,
+  'AQUOS sence 4 plus': 13400,
+  'AQUOS sence 4 basic': 13400,
+  'AQUOS sence 5G': 13400,
+  'AQUOS sence 5G basic': 13400,
+  'AQUOS sence 6': 13400,
+  'AQUOS sence 6S': 13400,
+  'AQUOS sence 7': 13400,
+  'AQUOS sence 7plus': 13400,
+  'AQUOS sence 8': 13400,
+  'AQUOS R': 12400,
+  'AQUOS R2': 13400,
+  'AQUOS R3': 13400,
+  'AQUOS R5G': 14400,
+  'AQUOS R6': 14400,
+  'AQUOS R7': 15400,
+  'AQUOS R8': 15400,
+  'AQUOS R8 Pro': 19400,
+  'AQUOS R9': 15400,
+  'AQUOS zero': 13400,
+  'AQUOS zero5G basic': 13400,
+  'AQUOS zero 2': 13400,
+  'AQUOS zero 6': 16400,
+  'AQUOS Wish': 12400,
+  'AQUOS Wish2': 12400,
+  'AQUOS Wish3': 12400,
+  'AQUOS Wish4': 13400,
+  'Reno A': 14400,
+  'Reno 3 5G': 16400,
+  'Reno 3A': 14400,
+  'Reno 5A': 14400,
+  'Reno 7A': 16400,
+  'Reno 9A': 16400,
+  'Reno 10Pro': 19400,
+  'Reno 11A': 19400,
+  'Find X': 13400,
+  'Find X2 Pro': 13400,
+  'Find X3 Pro': 13400,
+  'A5 2020': 13400,
+  'A54 5G': 14400,
+  'A55s 5G': 14400,
+  'A73': 14400,
+  'A77': 19400,
+  'A79 5G': 19400,
+  'A3 5G': 19400,
+};
+
+const ANDROID_BRANDS = {
+  'Google': [
+    'Pixel 3',
+    'Pixel 3 XL',
+    'Pixel 3a',
+    'Pixel 3a XL',
+    'Pixel 4',
+    'Pixel 4 XL',
+    'Pixel 4a',
+    'Pixel 4a 5G',
+    'Pixel 5',
+    'Pixel 5a 5G',
+    'Pixel 6',
+    'Pixel 6A',
+    'Pixel 6 Pro',
+    'Pixel 7',
+    'Pixel 7A',
+    'Pixel 7 Pro',
+    'Pixel 8',
+    'Pixel 8A',
+    'Pixel 8 Pro',
+    'Pixel 9',
+    'Pixel 9 Pro',
+    'Pixel 9 Pro XL',
+    'Pixel Fold',
+  ],
+  'SHARP': [
+    'AQUOS sence',
+    'AQUOS sence 2',
+    'AQUOS sence 3',
+    'AQUOS sence 3 basic',
+    'AQUOS sence 3 lite',
+    'AQUOS sence 3 plus',
+    'AQUOS sence 4',
+    'AQUOS sence 4 lite',
+    'AQUOS sence 4 plus',
+    'AQUOS sence 4 basic',
+    'AQUOS sence 5G',
+    'AQUOS sence 5G basic',
+    'AQUOS sence 6',
+    'AQUOS sence 6S',
+    'AQUOS sence 7',
+    'AQUOS sence 7plus',
+    'AQUOS sence 8',
+    'AQUOS R',
+    'AQUOS R2',
+    'AQUOS R3',
+    'AQUOS R5G',
+    'AQUOS R6',
+    'AQUOS R7',
+    'AQUOS R8',
+    'AQUOS R8 Pro',
+    'AQUOS R9',
+    'AQUOS zero',
+    'AQUOS zero5G basic',
+    'AQUOS zero 2',
+    'AQUOS zero 6',
+    'AQUOS Wish',
+    'AQUOS Wish2',
+    'AQUOS Wish3',
+    'AQUOS Wish4',
+  ],
+  'Xiaomi': [
+    'Mi Note 10',
+    'Mi Note 10 Lite',
+    'Mi 11 Lite 5G',
+    'Xiaomi 11T',
+    'Xiaomi 11T Pro',
+    'Redmi 9T',
+    'Redmi 12 5G',
+    'Redmi Note 9s',
+    'Redmi Note 9T',
+    'Redmi Note 9T 5G',
+    'Redmi Note 10 5G',
+    'Redmi Note 10 Pro 4G',
+    'Redmi Note 10 Pro 5G',
+    'Redmi Note 11',
+    'Redmi Note 11 Pro 5G',
+    'Redmi Note 10T',
+    'Redmi Note 10 JE',
+    'Poco F4 GT',
+    'Black Shark 2',
+    'Black Shark 3',
+    'Black Shark 4',
+    'Black Shark 4 Pro',
+    'Black Shark 5',
+    'Black Shark 5 Pro',
+    'Xiaomi Pad 5',
+    'Redmi Pad',
+    'Xiaomi Pad 6',
+  ],
+  'OPPO': [
+    'Reno A',
+    'Reno 3 5G',
+    'Reno 3A',
+    'Reno 5A',
+    'Reno 7A',
+    'Reno 9A',
+    'Reno 10Pro',
+    'Reno 11A',
+    'Find X',
+    'Find X2 Pro',
+    'Find X3 Pro',
+    'A5 2020',
+    'A54 5G',
+    'A55s 5G',
+    'A73',
+    'A77',
+    'A79 5G',
+    'A3 5G',
+  ],
+  'Huawei': [
+    'Ascend G620S',
+    'Lumiere 503HW',
+    'honor 6 Plus',
+    'honor 8',
+    'honor 9',
+    'nova',
+    'nova2',
+    'nova3',
+    'nova lite',
+    'nova lite 2',
+    'nova lite 3',
+    'nova 5T',
+    'P8 lite',
+    'P8 max',
+    'P9',
+    'P9 lite',
+    'P10',
+    'P10 lite',
+    'P10 Plus',
+    'P20',
+    'P20 lite',
+    'P20 pro',
+    'P30',
+    'P30 lite',
+    'P30 Pro',
+    'HUAWEI Mate 9',
+    'HUAWEI Mate 10 lite',
+    'HUAWEI Mate 10',
+    'HUAWEI Mate 10 Pro',
+    'HUAWEI Mate 20 lite',
+    'HUAWEI Mate 20',
+    'HUAWEI Mate 20 Pro',
+    'MediaPad T1 7',
+    'MediaPad T1 10',
+    'MediaPad T2 10',
+    'MediaPad T2 7',
+    'MediaPad T3 7',
+    'MediaPad T3 8',
+    'MediaPad T3 10',
+    'Mediapad T5 10',
+    'MediaPad M2 8',
+    'MediaPad M3 lite',
+    'MediaPad M3 lite 10 wp',
+    'Mediapad M5',
+    'MediaPad M5 lite',
+    'MediaPad M5 Pro',
+    'MediaPad M5 10',
+    'MediaPad M5 lite 8',
+  ],
+  'Samsung': [
+    'Galaxy S7 edge',
+    'Galaxy S8',
+    'Galaxy S8+',
+    'Galaxy S9',
+    'Galaxy S9+',
+    'Galaxy S10',
+    'Galaxy S10+',
+    'Galaxy S20 5G',
+    'Galaxy S20+ 5G',
+    'Galaxy S20 Ultra 5G',
+    'Galaxy S21 5G',
+    'Galaxy S21+ 5G',
+    'Galaxy S21 Ultra 5G',
+    'Galaxy S22',
+    'Galaxy S22+',
+    'Galaxy S22 Ultra',
+    'Galaxy S23',
+    'Galaxy S23+',
+    'Galaxy S23 Ultra',
+    'Galaxy S23 FE',
+    'Galaxy S24',
+    'Galaxy S24+',
+    'Galaxy S24 Ultra',
+    'Galaxy Note8',
+    'Galaxy Note9',
+    'Galaxy Note10 Plus',
+    'Galaxy Note20 Ultra',
+    'Galaxy A7',
+    'Galaxy A20',
+    'Galaxy A21',
+    'Galaxy A22 5G',
+    'Galaxy A23 5G',
+    'Galaxy A30',
+    'Galaxy A32 5G',
+    'Galaxy A41',
+    'Galaxy A51 5G',
+    'Galaxy A52 5G',
+    'Galaxy A53 5G',
+    'Galaxy A54 5G',
+    'Galaxy A55 5G',
+    'Galaxy Z Fold 5G',
+    'Galaxy Z Fold2 5G',
+    'Galaxy Z Fold3 5G',
+    'Galaxy Z Fold4 5G',
+    'Galaxy Z Fold5 5G',
+    'Galaxy Z Flip 5G',
+    'Galaxy Z Flip3 5G',
+    'Galaxy Z Flip4 5G',
+    'Galaxy Z Flip5 5G',
+  ],
+  'Sony': [
+    'Xperia X Performance',
+    'Xperia X Compact',
+    'Xperia XZ',
+    'Xperia XZs',
+    'Xperia XZ Premium',
+    'Xperia XZ1',
+    'Xperia XZ1 Compact',
+    'Xperia XZ2',
+    'Xperia XZ2 Compact',
+    'Xperia XZ2 Premium',
+    'Xperia XZ3',
+    'Xperia 1',
+    'Xperia 1Ⅱ',
+    'Xperia 1Ⅲ',
+    'Xperia 1Ⅳ',
+    'Xperia 1Ⅴ',
+    'Xperia 1Ⅵ',
+    'Xperia 5',
+    'Xperia 5Ⅱ',
+    'Xperia 5 Ⅲ',
+    'Xperia 5Ⅳ',
+    'Xperia 5Ⅴ',
+    'Xperia 8/8lite',
+    'Xperia 10 Plus',
+    'Xperia 10Ⅱ',
+    'Xperia 10Ⅲ',
+    'Xperia 10Ⅳ',
+    'Xperia 10Ⅴ',
+    'Xperia 10Ⅵ',
+    'Xperia Ace',
+    'Xperia AceⅡ',
+    'Xperia AceⅢ',
+    'Xperia Pro',
+    'Xperia Pro-Ⅰ',
+    'Xperia Z2 Tablet',
+    'Xperia Z3 Tablet Compact',
+    'Xperia Z4 Tablet',
+  ],
+  'FCNT': [
+    'arrows M04',
+    'arrows M05',
+    'arrows U/J',
+    'arrows We',
+    'arrows We 2',
+  ],
+  'Rakuten': [
+    'Rakuten mini',
+    'Rakuten Hand',
+    'Rakuten Hand2',
+    'Rakuten BIG',
+    'Rakuten BIGs',
+  ],
+  'ASUS': [
+    'ZenFone 5 (A500KL)',
+    'ZenFone 2 (ZE551ML)',
+    'ZenFone 2 Laser (ZE500KL)',
+    'ZenFone Selfie (ZD551KL)',
+    'ZenFone Zoom (ZX551ML)',
+    'ZenFone Max (ZC550KL)',
+    'ZenFone Go (ZB551KL)',
+    'ZenFone 3 (ZE520KL)',
+    'ZenFone 3 (ZE552KL)',
+    'ZenFone 3 Deluxe (ZS570KL)',
+    'ZenFone 3 Laser (ZC551KL)',
+    'Zenfone 3 Ultra',
+    'ZenFone 3 Max (ZC520TL)',
+    'ZenFone 3 Max (ZC553KL)',
+    'ZenFone AR (ZS571KL)',
+    'ZenFone Live (ZB501KL)',
+    'ZenFone 4 (ZE554KL)',
+    'ZenFone 4 Selfie Pro (ZD552KL)',
+    'ZenFone 4 Pro (ZS551KL)',
+    'ZenFone 4 Max (ZC520KL)',
+    'ZenFone 4 Selfie (ZD553KL)',
+    'ZenFone Max Plus M1 (ZB570TL)',
+    'ZenFone 5 (ZE620KL)',
+    'ZenFone 5Q (ZC600KL)',
+    'ZenFone 5Z (ZS620KL)',
+    'ZenFone Max M1 (ZB555KL)',
+    'ROG Phone (ZS600KL)',
+    'ZenFone Live L1 (ZA550KL)',
+    'ZenFone Max Pro M1 (ZB602KL)',
+    'ZenFone Max M2 (ZB633KL)',
+    'ZenFone Max Pro M2 (ZB631KL)',
+    'Zenfone 6 (ZS630KL)',
+    'ZenPad 7.0 (Z370C)',
+    'ZenPad 10 (Z300C)',
+    'ZenPad 8.0 (Z380C)',
+    'ZenPad 8.0 (Z380KL)',
+    'ZenPad 3 8.0 (Z581KL)',
+    'ZenPad 3S 10 (Z500KL)',
+    'ZenPad 10 (Z301M)',
+  ],
+};
+
+
+const IPOD_GLASS_ONLY = {
+  'iPod Touch 4th': 13600,
+  'iPod Touch 5th / 6th / 7th': 14100,
+};
+
+const IPOD_SCREEN = {
+  'iPod Touch 4th': 13600,
+  'iPod Touch 5th / 6th / 7th': 14100,
+};
+
+const IPOD_BATTERY = {
+  'iPod Touch 4th': 12100,
+  'iPod Touch 5th / 6th / 7th': 12100,
+};
+
+const IPOD_CHARGE = {
+  'iPod Touch 4th': 12600,
+  'iPod Touch 5th / 6th / 7th': 13600,
+};
+
+const IPOD_FRONT_CAMERA = {
+  'iPod Touch 4th': 12100,
+  'iPod Touch 5th / 6th / 7th': 12100,
+};
+
+const IPOD_CAMERA = {
+  'iPod Touch 4th': 11100,
+  'iPod Touch 5th / 6th / 7th': 11100,
+};
+
+const IPOD_HOME_BUTTON = {
+  'iPod Touch 4th': 12600,
+  'iPod Touch 5th / 6th / 7th': 13600,
+};
+
+const IPOD_TOP_BUTTON = {
+  'iPod Touch 4th': 12600,
+  'iPod Touch 5th / 6th / 7th': 13600,
+};
+
+const IPOD_HEADPHONE_JACK = {
+  'iPod Touch 4th': 12600,
+  'iPod Touch 5th / 6th / 7th': 13600,
+};
+
+const IPOD_SPEAKER = {
+  'iPod Touch 4th': 13100,
+  'iPod Touch 5th / 6th / 7th': 13100,
+};
+
+
+const WATCH_SCREEN = {
+  'AppleWatch 初代 38': 9000,
+  'AppleWatch 初代 42': 9000,
+  'AppleWatch 1st 38': 9000,
+  'AppleWatch 1st 42': 9000,
+  'AppleWatch 2nd 38': 11000,
+  'AppleWatch 2nd 42': 14000,
+  'AppleWatch 3rd 38 GPS': 12000,
+  'AppleWatch 3rd 38 GPS+Cellular': 11000,
+  'AppleWatch 3rd 42 GPS': 14000,
+  'AppleWatch 3rd 42 GPS+Cellular': 14000,
+  'AppleWatch 4th 40': 12000,
+  'AppleWatch 4th 44': 21000,
+  'AppleWatch 5th 40': 16000,
+  'AppleWatch 5th 44': 19000,
+  'AppleWatch SE 40': 16000,
+  'AppleWatch SE 44': 19000,
+  'AppleWatch 6th 40': 16000,
+  'AppleWatch 6th 44': 21000,
+  'AppleWatch 7th 41': 15000,
+  'AppleWatch 7th 45': 15000,
+  'AppleWatch SE2 40': 17000,
+  'AppleWatch SE2 44': 18000,
+  'AppleWatch 8th 41': 21000,
+  'AppleWatch 8th 45': 29500,
+  'AppleWatch Ultra': 33000,
+  'AppleWatch 9th 41': 20000,
+  'AppleWatch 9th 45': 21000,
+  'AppleWatch Ultra2': 34000,
+  'AppleWatch 10 42': 30000,
+  'AppleWatch 10 46': 32000,
+  'AppleWatch Ultra3': 56000,
+  'AppleWatch SE3 40': 32000,
+  'AppleWatch SE3 44': 32000,
+  'AppleWatch 11 42': 30000,
+  'AppleWatch 11 46': 32000,
+};
+
+const WATCH_BATTERY = {
+  'AppleWatch 初代 38': 6000,
+  'AppleWatch 初代 42': 6000,
+  'AppleWatch 1st 38': 6000,
+  'AppleWatch 1st 42': 6000,
+  'AppleWatch 2nd 38': 6000,
+  'AppleWatch 2nd 42': 6000,
+  'AppleWatch 3rd 38 GPS': 6000,
+  'AppleWatch 3rd 38 GPS+Cellular': 6000,
+  'AppleWatch 3rd 42 GPS': 6000,
+  'AppleWatch 3rd 42 GPS+Cellular': 6000,
+  'AppleWatch 4th 40': 7000,
+  'AppleWatch 4th 44': 6000,
+  'AppleWatch 5th 40': 6000,
+  'AppleWatch 5th 44': 6000,
+  'AppleWatch SE 40': 6000,
+  'AppleWatch SE 44': 6000,
+  'AppleWatch 6th 40': 7000,
+  'AppleWatch 6th 44': 6000,
+  'AppleWatch 7th 41': 7000,
+  'AppleWatch 7th 45': 7000,
+  'AppleWatch SE2 40': 6000,
+  'AppleWatch SE2 44': 6000,
+  'AppleWatch 8th 41': 9000,
+  'AppleWatch 8th 45': 9000,
+  'AppleWatch Ultra': 12000,
+  'AppleWatch 9th 41': 9000,
+  'AppleWatch 9th 45': 8000,
+  'AppleWatch Ultra2': 14000,
+  'AppleWatch 10 42': 9000,
+  'AppleWatch 10 46': 9000,
+  'AppleWatch Ultra3': 18000,
+};
+
+
+const IPAD2_GLASS_ONLY = {
+  'iPad 1st': 14600,
+  'iPad 2nd / 3rd': 13600,
+  'iPad 4th': 14600,
+  'iPad 5th 2017/6th 2018': 16100,
+  'iPad 7th 2019/8th 2020': 16600,
+  'iPad 9th 2021': 17600,
+  'iPad Air': 14600,
+  'iPad Air2': 26600,
+  'iPad Air3': 29600,
+  'iPad mini': 14600,
+  'iPad mini2': 14600,
+  'iPad mini3': 15100,
+  'iPad mini4/ mini5': 25600,
+  'iPad Pro 9.7': 28600,
+  'iPad Pro 10.5': 29600,
+  'iPad Pro 12.9 1st': 38600,
+  'iPad Pro 12.9 2nd': 64600,
+  'iPad 10th 2022': 18600,
+  'iPad Air4': 31400,
+  'iPad Air5': 31400,
+  'iPad mini6': 47600,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 37600,
+  'iPad Pro 12.9 3rd / 4th': 37600,
+  'iPad Pro 12.9 5th / 6th': 49600,
+};
+
+const IPAD2_SCREEN = {
+  'iPad 1st': 21600,
+  'iPad 2nd / 3rd': 17600,
+  'iPad 4th': 17600,
+  'iPad 5th 2017/6th 2018': 24600,
+  'iPad 7th 2019/8th 2020': 24600,
+  'iPad 9th 2021': 25600,
+  'iPad Air': 22600,
+  'iPad Air2': 26600,
+  'iPad Air3': 29600,
+  'iPad mini': 18600,
+  'iPad mini2': 20600,
+  'iPad mini3': 20600,
+  'iPad mini4/ mini5': 25600,
+  'iPad Pro 9.7': 28600,
+  'iPad Pro 10.5': 29600,
+  'iPad Pro 12.9 1st': 38600,
+  'iPad Pro 12.9 2nd': 64600,
+  'iPad 10th 2022': 38600,
+  'iPad Air4': 31400,
+  'iPad Air5': 31400,
+  'iPad mini6': 47600,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 37600,
+  'iPad Pro 12.9 3rd / 4th': 37600,
+  'iPad Pro 12.9 5th / 6th': 49600,
+};
+
+const IPAD2_BATTERY = {
+  'iPad 1st': 13600,
+  'iPad 2nd / 3rd': 13600,
+  'iPad 4th': 13600,
+  'iPad 5th 2017/6th 2018': 13600,
+  'iPad 7th 2019/8th 2020': 13600,
+  'iPad 9th 2021': 13600,
+  'iPad Air': 13600,
+  'iPad Air2': 13600,
+  'iPad Air3': 14600,
+  'iPad mini': 13600,
+  'iPad mini2': 13600,
+  'iPad mini3': 13600,
+  'iPad mini4/ mini5': 13600,
+  'iPad Pro 9.7': 14600,
+  'iPad Pro 10.5': 16100,
+  'iPad Pro 12.9 1st': 16100,
+  'iPad Pro 12.9 2nd': 16100,
+  'iPad 10th 2022': 14600,
+  'iPad Air4': 15600,
+  'iPad Air5': 15600,
+  'iPad mini6': 15600,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 16100,
+  'iPad Pro 12.9 3rd / 4th': 16100,
+  'iPad Pro 12.9 5th / 6th': 18600,
+};
+
+const IPAD2_CHARGE = {
+  'iPad 1st': 14100,
+  'iPad 2nd / 3rd': 14100,
+  'iPad 4th': 14100,
+  'iPad 5th 2017/6th 2018': 14100,
+  'iPad 7th 2019/8th 2020': 14100,
+  'iPad 9th 2021': 14100,
+  'iPad Air': 14100,
+  'iPad Air2': 14100,
+  'iPad Air3': 15600,
+  'iPad mini': 14100,
+  'iPad mini2': 14100,
+  'iPad mini3': 14100,
+  'iPad mini4/ mini5': 14100,
+  'iPad Pro 9.7': 15600,
+  'iPad Pro 10.5': 15600,
+  'iPad Pro 12.9 1st': 16100,
+  'iPad Pro 12.9 2nd': 16100,
+  'iPad 10th 2022': 15600,
+  'iPad Air4': 15100,
+  'iPad Air5': 15100,
+  'iPad mini6': 15100,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 15100,
+  'iPad Pro 12.9 3rd / 4th': 15100,
+  'iPad Pro 12.9 5th / 6th': 15100,
+};
+
+const IPAD2_FRONT_CAMERA = {
+  'iPad 1st': 12400,
+  'iPad 2nd / 3rd': 12400,
+  'iPad 4th': 12400,
+  'iPad 5th 2017/6th 2018': 14100,
+  'iPad 7th 2019/8th 2020': 14100,
+  'iPad 9th 2021': 14100,
+  'iPad Air': 14100,
+  'iPad Air2': 14100,
+  'iPad Air3': 14600,
+  'iPad mini': 14100,
+  'iPad mini2': 14100,
+  'iPad mini3': 14100,
+  'iPad mini4/ mini5': 14100,
+  'iPad Pro 9.7': 15600,
+  'iPad Pro 10.5': 15600,
+  'iPad Pro 12.9 1st': 16100,
+  'iPad Pro 12.9 2nd': 16100,
+  'iPad 10th 2022': 15600,
+  'iPad Air4': 14600,
+  'iPad Air5': 14600,
+  'iPad mini6': 15100,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 15100,
+  'iPad Pro 12.9 3rd / 4th': 15100,
+  'iPad Pro 12.9 5th / 6th': 15100,
+};
+
+const IPAD2_CAMERA = {
+  'iPad 1st': 12400,
+  'iPad 2nd / 3rd': 12400,
+  'iPad 4th': 12400,
+  'iPad 5th 2017/6th 2018': 14100,
+  'iPad 7th 2019/8th 2020': 14100,
+  'iPad 9th 2021': 14100,
+  'iPad Air': 14100,
+  'iPad Air2': 14100,
+  'iPad Air3': 14600,
+  'iPad mini': 14100,
+  'iPad mini2': 14100,
+  'iPad mini3': 14100,
+  'iPad mini4/ mini5': 14100,
+  'iPad Pro 9.7': 15600,
+  'iPad Pro 10.5': 15600,
+  'iPad Pro 12.9 1st': 16100,
+  'iPad Pro 12.9 2nd': 16100,
+  'iPad 10th 2022': 15600,
+  'iPad Air4': 14600,
+  'iPad Air5': 14600,
+  'iPad mini6': 15100,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 15100,
+  'iPad Pro 12.9 3rd / 4th': 15100,
+  'iPad Pro 12.9 5th / 6th': 15100,
+};
+
+const IPAD2_HOME_BUTTON = {
+  'iPad 1st': 12600,
+  'iPad 2nd / 3rd': 12600,
+  'iPad 4th': 12600,
+  'iPad 5th 2017/6th 2018': 12600,
+  'iPad 7th 2019/8th 2020': 12600,
+  'iPad 9th 2021': 12600,
+  'iPad Air': 12600,
+  'iPad Air2': 12600,
+  'iPad Air3': 12600,
+  'iPad mini': 12600,
+  'iPad mini2': 12600,
+  'iPad mini3': 12600,
+  'iPad mini4/ mini5': 12600,
+  'iPad Pro 9.7': 12600,
+  'iPad Pro 10.5': 12600,
+  'iPad Pro 12.9 1st': 13600,
+  'iPad Pro 12.9 2nd': 13600,
+};
+
+const IPAD2_TOP_BUTTON = {
+  'iPad 1st': 13600,
+  'iPad 2nd / 3rd': 13600,
+  'iPad 4th': 13600,
+  'iPad 5th 2017/6th 2018': 13600,
+  'iPad 7th 2019/8th 2020': 13600,
+  'iPad 9th 2021': 13600,
+  'iPad Air': 13600,
+  'iPad Air2': 13600,
+  'iPad Air3': 18600,
+  'iPad mini': 13600,
+  'iPad mini2': 13600,
+  'iPad mini3': 13600,
+  'iPad mini4/ mini5': 13600,
+  'iPad Pro 9.7': 16600,
+  'iPad Pro 10.5': 18600,
+  'iPad Pro 12.9 1st': 16600,
+  'iPad Pro 12.9 2nd': 16600,
+  'iPad 10th 2022': 13600,
+  'iPad Air4': 14600,
+  'iPad Air5': 16600,
+  'iPad mini6': 15600,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 14600,
+  'iPad Pro 12.9 3rd / 4th': 16100,
+  'iPad Pro 12.9 5th / 6th': 20600,
+};
+
+const IPAD2_HEADPHONE_JACK = {
+  'iPad 1st': 13600,
+  'iPad 2nd / 3rd': 13600,
+  'iPad 4th': 13600,
+  'iPad 5th 2017/6th 2018': 13600,
+  'iPad 7th 2019/8th 2020': 13600,
+  'iPad 9th 2021': 13600,
+  'iPad Air': 13600,
+  'iPad Air2': 13600,
+  'iPad Air3': 18600,
+  'iPad mini': 13600,
+  'iPad mini2': 13600,
+  'iPad mini3': 13600,
+  'iPad mini4/ mini5': 13600,
+  'iPad Pro 9.7': 16600,
+  'iPad Pro 10.5': 18600,
+  'iPad Pro 12.9 1st': 16600,
+  'iPad Pro 12.9 2nd': 16600,
+  'iPad 10th 2022': 13600,
+  'iPad Air4': 14600,
+  'iPad Air5': 16600,
+  'iPad mini6': 15600,
+  'iPad Pro 11 1st / 2nd / 3rd / 4th': 14600,
+  'iPad Pro 12.9 3rd / 4th': 16100,
+  'iPad Pro 12.9 5th / 6th': 20600,
+};
+
+const IPAD2_SPEAKER = {
+};
+
+const NO_WORK_FEE_MODELS = [
+  // Android（全モデル、税込・作業費込PDFのため）
+  'Ascend G620S',
+  'Lumiere 503HW',
+  'honor 6 Plus',
+  'honor 8',
+  'honor 9',
+  'nova',
+  'nova2',
+  'nova3',
+  'nova lite',
+  'nova lite 2',
+  'nova lite 3',
+  'nova 5T',
+  'P8 lite',
+  'P8 max',
+  'P9',
+  'P9 lite',
+  'P10',
+  'P10 lite',
+  'P10 Plus',
+  'P20',
+  'P20 lite',
+  'P20 pro',
+  'P30',
+  'P30 lite',
+  'P30 Pro',
+  'HUAWEI Mate 9',
+  'HUAWEI Mate 10 lite',
+  'HUAWEI Mate 10',
+  'HUAWEI Mate 10 Pro',
+  'HUAWEI Mate 20 lite',
+  'HUAWEI Mate 20',
+  'HUAWEI Mate 20 Pro',
+  'MediaPad T1 7',
+  'MediaPad T1 10',
+  'MediaPad T2 10',
+  'MediaPad T2 7',
+  'MediaPad T3 7',
+  'MediaPad T3 8',
+  'MediaPad T3 10',
+  'Mediapad T5 10',
+  'MediaPad M2 8',
+  'MediaPad M3 lite',
+  'MediaPad M3 lite 10 wp',
+  'Mediapad M5',
+  'MediaPad M5 lite',
+  'MediaPad M5 Pro',
+  'MediaPad M5 10',
+  'MediaPad M5 lite 8',
+  'ZenFone 5 (A500KL)',
+  'ZenFone 2 (ZE551ML)',
+  'ZenFone 2 Laser (ZE500KL)',
+  'ZenFone Selfie (ZD551KL)',
+  'ZenFone Zoom (ZX551ML)',
+  'ZenFone Max (ZC550KL)',
+  'ZenFone Go (ZB551KL)',
+  'ZenFone 3 (ZE520KL)',
+  'ZenFone 3 (ZE552KL)',
+  'ZenFone 3 Deluxe (ZS570KL)',
+  'ZenFone 3 Laser (ZC551KL)',
+  'Zenfone 3 Ultra',
+  'ZenFone 3 Max (ZC520TL)',
+  'ZenFone 3 Max (ZC553KL)',
+  'ZenFone AR (ZS571KL)',
+  'ZenFone Live (ZB501KL)',
+  'ZenFone 4 (ZE554KL)',
+  'ZenFone 4 Selfie Pro (ZD552KL)',
+  'ZenFone 4 Pro (ZS551KL)',
+  'ZenFone 4 Max (ZC520KL)',
+  'ZenFone 4 Selfie (ZD553KL)',
+  'ZenFone Max Plus M1 (ZB570TL)',
+  'ZenFone 5 (ZE620KL)',
+  'ZenFone 5Q (ZC600KL)',
+  'ZenFone 5Z (ZS620KL)',
+  'ZenFone Max M1 (ZB555KL)',
+  'ROG Phone (ZS600KL)',
+  'ZenFone Live L1 (ZA550KL)',
+  'ZenFone Max Pro M1 (ZB602KL)',
+  'ZenFone Max M2 (ZB633KL)',
+  'ZenFone Max Pro M2 (ZB631KL)',
+  'Zenfone 6 (ZS630KL)',
+  'ZenPad 7.0 (Z370C)',
+  'ZenPad 10 (Z300C)',
+  'ZenPad 8.0 (Z380C)',
+  'ZenPad 8.0 (Z380KL)',
+  'ZenPad 3 8.0 (Z581KL)',
+  'ZenPad 3S 10 (Z500KL)',
+  'ZenPad 10 (Z301M)',
+  'Galaxy S7 edge',
+  'Galaxy S8',
+  'Galaxy S8+',
+  'Galaxy S9',
+  'Galaxy S9+',
+  'Galaxy S10',
+  'Galaxy S10+',
+  'Galaxy S20 5G',
+  'Galaxy S20+ 5G',
+  'Galaxy S20 Ultra 5G',
+  'Galaxy S21 5G',
+  'Galaxy S21+ 5G',
+  'Galaxy S21 Ultra 5G',
+  'Galaxy S22',
+  'Galaxy S22+',
+  'Galaxy S22 Ultra',
+  'Galaxy S23',
+  'Galaxy S23+',
+  'Galaxy S23 Ultra',
+  'Galaxy S23 FE',
+  'Galaxy S24',
+  'Galaxy S24+',
+  'Galaxy S24 Ultra',
+  'Galaxy Note8',
+  'Galaxy Note9',
+  'Galaxy Note10 Plus',
+  'Galaxy Note20 Ultra',
+  'Galaxy A7',
+  'Galaxy A20',
+  'Galaxy A21',
+  'Galaxy A22 5G',
+  'Galaxy A23 5G',
+  'Galaxy A30',
+  'Galaxy A32 5G',
+  'Galaxy A41',
+  'Galaxy A51 5G',
+  'Galaxy A52 5G',
+  'Galaxy A53 5G',
+  'Galaxy A54 5G',
+  'Galaxy A55 5G',
+  'Galaxy Z Fold 5G',
+  'Galaxy Z Fold2 5G',
+  'Galaxy Z Fold3 5G',
+  'Galaxy Z Fold4 5G',
+  'Galaxy Z Fold5 5G',
+  'Galaxy Z Flip 5G',
+  'Galaxy Z Flip3 5G',
+  'Galaxy Z Flip4 5G',
+  'Galaxy Z Flip5 5G',
+  'Xperia X Performance',
+  'Xperia X Compact',
+  'Xperia XZ',
+  'Xperia XZs',
+  'Xperia XZ Premium',
+  'Xperia XZ1',
+  'Xperia XZ1 Compact',
+  'Xperia XZ2',
+  'Xperia XZ2 Compact',
+  'Xperia XZ2 Premium',
+  'Xperia XZ3',
+  'Xperia 1',
+  'Xperia 1Ⅱ',
+  'Xperia 1Ⅲ',
+  'Xperia 1Ⅳ',
+  'Xperia 1Ⅴ',
+  'Xperia 1Ⅵ',
+  'Xperia 5',
+  'Xperia 5Ⅱ',
+  'Xperia 5 Ⅲ',
+  'Xperia 5Ⅳ',
+  'Xperia 5Ⅴ',
+  'Xperia 8/8lite',
+  'Xperia 10 Plus',
+  'Xperia 10Ⅱ',
+  'Xperia 10Ⅲ',
+  'Xperia 10Ⅳ',
+  'Xperia 10Ⅴ',
+  'Xperia 10Ⅵ',
+  'Xperia Ace',
+  'Xperia AceⅡ',
+  'Xperia AceⅢ',
+  'Xperia Pro',
+  'Xperia Pro-Ⅰ',
+  'Xperia Z2 Tablet',
+  'Xperia Z3 Tablet Compact',
+  'Xperia Z4 Tablet',
+  'arrows M04',
+  'arrows M05',
+  'arrows U/J',
+  'arrows We',
+  'arrows We 2',
+  'Rakuten mini',
+  'Rakuten Hand',
+  'Rakuten Hand2',
+  'Rakuten BIG',
+  'Rakuten BIGs',
+  'Pixel 3',
+  'Pixel 3 XL',
+  'Pixel 3a',
+  'Pixel 3a XL',
+  'Pixel 4',
+  'Pixel 4 XL',
+  'Pixel 4a',
+  'Pixel 4a 5G',
+  'Pixel 5',
+  'Pixel 5a 5G',
+  'Pixel 6',
+  'Pixel 6A',
+  'Pixel 6 Pro',
+  'Pixel 7',
+  'Pixel 7A',
+  'Pixel 7 Pro',
+  'Pixel 8',
+  'Pixel 8A',
+  'Pixel 8 Pro',
+  'Pixel 9',
+  'Pixel 9 Pro',
+  'Pixel 9 Pro XL',
+  'Pixel Fold',
+  'Mi Note 10',
+  'Mi Note 10 Lite',
+  'Mi 11 Lite 5G',
+  'Xiaomi 11T',
+  'Xiaomi 11T Pro',
+  'Redmi 9T',
+  'Redmi 12 5G',
+  'Redmi Note 9s',
+  'Redmi Note 9T',
+  'Redmi Note 9T 5G',
+  'Redmi Note 10 5G',
+  'Redmi Note 10 Pro 4G',
+  'Redmi Note 10 Pro 5G',
+  'Redmi Note 11',
+  'Redmi Note 11 Pro 5G',
+  'Redmi Note 10T',
+  'Redmi Note 10 JE',
+  'Poco F4 GT',
+  'Black Shark 2',
+  'Black Shark 3',
+  'Black Shark 4',
+  'Black Shark 4 Pro',
+  'Black Shark 5',
+  'Black Shark 5 Pro',
+  'Xiaomi Pad 5',
+  'Redmi Pad',
+  'Xiaomi Pad 6',
+  'AQUOS sence',
+  'AQUOS sence 2',
+  'AQUOS sence 3',
+  'AQUOS sence 3 basic',
+  'AQUOS sence 3 lite',
+  'AQUOS sence 3 plus',
+  'AQUOS sence 4',
+  'AQUOS sence 4 lite',
+  'AQUOS sence 4 plus',
+  'AQUOS sence 4 basic',
+  'AQUOS sence 5G',
+  'AQUOS sence 5G basic',
+  'AQUOS sence 6',
+  'AQUOS sence 6S',
+  'AQUOS sence 7',
+  'AQUOS sence 7plus',
+  'AQUOS sence 8',
+  'AQUOS R',
+  'AQUOS R2',
+  'AQUOS R3',
+  'AQUOS R5G',
+  'AQUOS R6',
+  'AQUOS R7',
+  'AQUOS R8',
+  'AQUOS R8 Pro',
+  'AQUOS R9',
+  'AQUOS zero',
+  'AQUOS zero5G basic',
+  'AQUOS zero 2',
+  'AQUOS zero 6',
+  'AQUOS Wish',
+  'AQUOS Wish2',
+  'AQUOS Wish3',
+  'AQUOS Wish4',
+  'Reno A',
+  'Reno 3 5G',
+  'Reno 3A',
+  'Reno 5A',
+  'Reno 7A',
+  'Reno 9A',
+  'Reno 10Pro',
+  'Reno 11A',
+  'Find X',
+  'Find X2 Pro',
+  'Find X3 Pro',
+  'A5 2020',
+  'A54 5G',
+  'A55s 5G',
+  'A73',
+  'A77',
+  'A79 5G',
+  'A3 5G',
+  // iPod Touch（税込・作業費込PDFのため）
+  'iPod Touch 4th',
+  'iPod Touch 5th / 6th / 7th',
+
+  'iPad 1st',
+  'iPad 2nd / 3rd',
+  'iPad 4th',
+  'iPad 5th 2017/6th 2018',
+  'iPad 7th 2019/8th 2020',
+  'iPad 9th 2021',
+  'iPad Air',
+  'iPad Air2',
+  'iPad Air3',
+  'iPad mini',
+  'iPad mini2',
+  'iPad mini3',
+  'iPad mini4/ mini5',
+  'iPad Pro 9.7',
+  'iPad Pro 10.5',
+  'iPad Pro 12.9 1st',
+  'iPad Pro 12.9 2nd',
+  'iPad 10th 2022',
+  'iPad Air4',
+  'iPad Air5',
+  'iPad mini6',
+  'iPad Pro 11 1st / 2nd / 3rd / 4th',
+  'iPad Pro 12.9 3rd / 4th',
+  'iPad Pro 12.9 5th / 6th',
+];
+
+const PART_PRICE_TABLES = {
+  screen:        Object.assign({}, SCREEN_BASE_PRICE, withSurcharge(IPAD_SCREEN, IPAD_SURCHARGE), IPAD2_SCREEN, ANDROID_SCREEN, IPOD_SCREEN, WATCH_SCREEN),
+  glassOnly:     Object.assign({}, withSurcharge(IPAD_GLASS_ONLY, IPAD_SURCHARGE), IPAD2_GLASS_ONLY, IPOD_GLASS_ONLY),
+  battery:       Object.assign({}, PART_BATTERY, withSurcharge(IPAD_BATTERY, IPAD_SURCHARGE), IPAD2_BATTERY, ANDROID_BATTERY, IPOD_BATTERY, WATCH_BATTERY),
+  camera:        Object.assign({}, PART_CAMERA, withSurcharge(IPAD_CAMERA, IPAD_SURCHARGE), IPAD2_CAMERA, IPOD_CAMERA),
+  frontCamera:   Object.assign({}, PART_FRONT_CAMERA, withSurcharge(IPAD_FRONT_CAMERA, IPAD_SURCHARGE), IPAD2_FRONT_CAMERA, IPOD_FRONT_CAMERA),
+  charge:        Object.assign({}, PART_CHARGE, withSurcharge(IPAD_CHARGE, IPAD_SURCHARGE), IPAD2_CHARGE, ANDROID_CHARGE, IPOD_CHARGE),
+  speaker:       Object.assign({}, PART_SPEAKER, withSurcharge(IPAD_SPEAKER, IPAD_SURCHARGE), IPAD2_SPEAKER, IPOD_SPEAKER),
+  homeButton:    Object.assign({}, PART_HOME_BUTTON, withSurcharge(IPAD_HOME_BUTTON, IPAD_SURCHARGE), IPAD2_HOME_BUTTON, IPOD_HOME_BUTTON),
+  vibrator:      Object.assign({}, PART_VIBRATOR),
+  topButton:     Object.assign({}, PART_TOP_BUTTON, withSurcharge(IPAD_TOP_BUTTON, IPAD_SURCHARGE), IPAD2_TOP_BUTTON, IPOD_TOP_BUTTON),
+  headphoneJack: Object.assign({}, withSurcharge(IPAD_HEADPHONE_JACK, IPAD_SURCHARGE), IPAD2_HEADPHONE_JACK, IPOD_HEADPHONE_JACK),
+};
+
+// ホームボタンはTouch ID搭載機種にのみ存在するため、データが無い機種では項目自体を非表示にする
+const HIDE_IF_NO_DATA = ['homeButton', 'headphoneJack', 'glassOnly'];
+
+// 価格表（画像）に存在しない独自メニュー項目。iPhone以外では表示しない
+const IPHONE_ONLY_EXTRA_ITEMS = ['back', 'vibrator', 'water'];
+
+// 機種カテゴリごとに、価格表（画像）に存在する項目だけを許可するホワイトリスト
+// 未指定のカテゴリ（iPhone, tablet等）は制限なし
+const ALLOWED_ITEMS_BY_DEVICE = {
+  android:    ['screen', 'battery', 'charge'],
+  applewatch: ['screen', 'battery'],
+};
+
+// 防水パッキンを取り扱っていない機種（iPhone 5〜7シリーズ）
+const NO_WATERPROOF_MODELS = [
+  'iPhone 5', 'iPhone 5c', 'iPhone 5s / SE（第1世代）',
+  'iPhone 6', 'iPhone 6 Plus', 'iPhone 6s', 'iPhone 6s Plus',
+  'iPhone 7', 'iPhone 7 Plus',
+];
+
+// モデル別データテーブルが整備済みの機種カテゴリ
+const TABLE_READY_DEVICE_TYPES = ['iphone', 'ipad', 'android', 'ipod', 'applewatch'];
+
+// 指定した修理項目の、現在選択中モデルでの価格を返す。データが無ければ null（要問い合わせ）
+// 全カテゴリ共通の追加サーチャージ
+function getItemPrice(item){
+  if(TABLE_READY_DEVICE_TYPES.includes(state.deviceType) && item.modelPriceKey){
+    const table = PART_PRICE_TABLES[item.modelPriceKey];
+    if(table && table[state.model] != null) return table[state.model];
+    return null; // 要問い合わせ
+  }
+  return item.price;
+}
+
+/* =========================================================== */
+
+let state = { deviceType:null, model:null, brand:null, repairs:[], waterproof:null, screenGrade:null };
+
+function fmt(n){ return '¥' + n.toLocaleString(); }
+
+// STEP1描画
+const deviceGrid = document.getElementById('deviceGrid');
+DEVICE_TYPES.forEach(d=>{
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.innerHTML = `<div class="icon">${d.icon}</div><span class="label">${d.label}</span>`;
+  el.onclick = () => selectDevice(d.id, el);
+  deviceGrid.appendChild(el);
+});
+
+function selectDevice(id, el){
+  state.deviceType = id;
+  state.model = null;
+  state.brand = null;
+  document.querySelectorAll('#deviceGrid .card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  renderModels();
+  setTimeout(()=>goStep(2), 150);
+}
+
+function renderModels(){
+  const wrap = document.getElementById('modelList');
+  wrap.innerHTML = '';
+
+  // Android はメーカー（ブランド）を先に選んでもらう
+  if(state.deviceType === 'android' && !state.brand){
+    Object.keys(ANDROID_BRANDS).forEach(brand=>{
+      const el = document.createElement('div');
+      el.className = 'list-card';
+      el.innerHTML = `<span class="name">${brand}</span><span class="check"></span>`;
+      el.onclick = () => {
+        state.brand = brand;
+        renderModels();
+      };
+      wrap.appendChild(el);
+    });
+    return;
+  }
+
+  // Android かつブランド選択済みなら「戻る」リンクを表示
+  if(state.deviceType === 'android' && state.brand){
+    const backEl = document.createElement('div');
+    backEl.style.cssText = 'padding:4px 0 14px; font-size:13px; color:var(--gold-soft); cursor:pointer;';
+    backEl.textContent = '← メーカー選択に戻る';
+    backEl.onclick = () => { state.brand = null; renderModels(); };
+    wrap.appendChild(backEl);
+  }
+
+  const modelSource = (state.deviceType === 'android' && state.brand)
+    ? ANDROID_BRANDS[state.brand]
+    : (MODELS[state.deviceType] || []);
+
+  modelSource.forEach(m=>{
+    const el = document.createElement('div');
+    el.className = 'list-card';
+    el.innerHTML = `<span class="name">${m}</span><span class="check"></span>`;
+    el.onclick = () => {
+      state.model = m;
+      state.repairs = [];
+      state.waterproof = null;
+      state.screenGrade = null;
+      document.querySelectorAll('#modelList .list-card').forEach(c=>c.classList.remove('selected'));
+      el.classList.add('selected');
+      renderRepairs();
+      updateTotal();
+      document.getElementById('toStep4').disabled = true;
+      setTimeout(()=>goStep(3), 150);
+    };
+    wrap.appendChild(el);
+  });
+}
+
+function renderRepairs(){
+  const wrap = document.getElementById('repairList');
+  wrap.innerHTML = '';
+
+  const noticeBox = document.getElementById('factoryNotice');
+  if(['ipad','android','tablet','ipod','applewatch'].includes(state.deviceType)){
+    noticeBox.innerHTML = `
+      <div class="factory-notice">
+        <span class="fn-icon">⚠️</span>
+        <span>
+          <b>提携の専門工場での修理となります。</b><br>
+          お預かり期間：<b>1週間〜</b>が目安です。お急ぎの場合は事前にご相談ください。<br>
+          ※実機の状態を工場で確認のうえ最終金額が決定するため、<b>こちらは確定の見積りではございません。</b>診断の結果、金額が変動する場合がございます。
+        </span>
+      </div>
+    `;
+  } else {
+    noticeBox.innerHTML = '';
+  }
+
+  REPAIR_MENU.forEach(r=>{
+    // 価格表（画像）に存在しない独自項目は、iPhone以外では表示しない
+    if(IPHONE_ONLY_EXTRA_ITEMS.includes(r.id) && state.deviceType !== 'iphone'){
+      return;
+    }
+    // 機種カテゴリごとのホワイトリストに無い項目は表示しない
+    const allowList = ALLOWED_ITEMS_BY_DEVICE[state.deviceType];
+    if(allowList && !allowList.includes(r.id)){
+      return;
+    }
+
+    const price = getItemPrice(r);
+
+    // データが無く、かつ「項目自体を隠す」対象（ホームボタンなど物理的に存在しない機種）
+    if(price === null && HIDE_IF_NO_DATA.includes(r.id) && TABLE_READY_DEVICE_TYPES.includes(state.deviceType)){
+      return;
+    }
+
+    const el = document.createElement('div');
+    el.className = 'repair-item';
+
+    if(price === null){
+      el.style.opacity = '0.55';
+      el.innerHTML = `
+        <div class="left">
+          <div class="check" style="visibility:hidden;"></div>
+          <div>
+            <div class="name">${r.name}</div>
+            <div class="desc">準備中のため店頭・お電話でご確認ください</div>
+          </div>
+        </div>
+        <div class="price" style="font-size:12px;color:var(--sub);">要問い合わせ</div>
+      `;
+      wrap.appendChild(el);
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="left">
+        <div class="check"></div>
+        <div>
+          <div class="name">${r.name}</div>
+          <div class="desc">${r.desc}</div>
+        </div>
+      </div>
+      <div class="price">${fmt(price)}〜</div>
+    `;
+    el.onclick = () => toggleRepair(r.id, el);
+    wrap.appendChild(el);
+  });
+  renderWaterproof();
+}
+
+function renderWaterproof(){
+  const section = document.getElementById('waterproofSection');
+  const wrap = document.getElementById('waterproofGrid');
+
+  if(state.deviceType !== 'iphone' || NO_WATERPROOF_MODELS.includes(state.model)){
+    section.style.display = 'none';
+    state.waterproof = null;
+    return;
+  }
+  section.style.display = '';
+
+  wrap.innerHTML = '';
+  const options = [
+    { val:true,  label:'必要',   sub:fmt(WATERPROOF_OPTION.price) },
+    { val:false, label:'不要',   sub:'追加料金なし' },
+  ];
+  options.forEach(opt=>{
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.innerHTML = `<span class="label">${opt.label}</span><span class="sub">${opt.sub}</span>`;
+    if(state.waterproof === opt.val) el.classList.add('selected');
+    el.onclick = () => {
+      state.waterproof = opt.val;
+      document.querySelectorAll('#waterproofGrid .card').forEach(c=>c.classList.remove('selected'));
+      el.classList.add('selected');
+      updateTotal();
+    };
+    wrap.appendChild(el);
+  });
+}
+
+function toggleRepair(id, el){
+  const idx = state.repairs.indexOf(id);
+  if(idx === -1){
+    state.repairs.push(id);
+    el.classList.add('selected');
+  } else {
+    state.repairs.splice(idx,1);
+    el.classList.remove('selected');
+  }
+  updateTotal();
+  document.getElementById('toStep4').disabled = state.repairs.length === 0;
+}
+
+function calcTotal(){
+  let total = state.repairs.reduce((sum,id)=>{
+    const item = REPAIR_MENU.find(r=>r.id===id);
+    if(!item) return sum;
+    const price = getItemPrice(item);
+    return sum + (price || 0);
+  }, 0);
+  if(state.repairs.length > 0){
+    total += WORK_FEE.price;
+  }
+  if(state.waterproof === true){
+    total += WATERPROOF_OPTION.price;
+  }
+  return total;
+}
+
+function updateTotal(){
+  document.getElementById('liveTotal').innerHTML = fmt(calcTotal()) + '<span>（税込）</span>';
+}
+
+function renderSummary(){
+  const box = document.getElementById('summaryBox');
+  const deviceLabel = DEVICE_TYPES.find(d=>d.id===state.deviceType)?.label || '-';
+  let rows = `
+    <div class="summary-row"><span class="sname">機種カテゴリ</span><span class="sval">${deviceLabel}</span></div>
+    <div class="summary-row"><span class="sname">モデル</span><span class="sval">${state.model || '-'}</span></div>
+  `;
+  state.repairs.forEach(id=>{
+    const item = REPAIR_MENU.find(r=>r.id===id);
+    const price = getItemPrice(item);
+    rows += `<div class="summary-row"><span class="sname">${item.name}</span><span class="sval">${price !== null ? fmt(price)+'〜' : '要問い合わせ'}</span></div>`;
+  });
+  if(state.repairs.length > 0){
+    const feeLabel = state.deviceType === 'iphone' ? WORK_FEE.name : '荷造り運賃/手数料';
+    rows += `<div class="summary-row"><span class="sname">${feeLabel}</span><span class="sval">${fmt(WORK_FEE.price)}</span></div>`;
+  }
+  if(state.waterproof === true){
+    rows += `<div class="summary-row"><span class="sname">${WATERPROOF_OPTION.name}</span><span class="sval">${fmt(WATERPROOF_OPTION.price)}</span></div>`;
+  } else if(state.waterproof === false){
+    rows += `<div class="summary-row"><span class="sname">${WATERPROOF_OPTION.name}</span><span class="sval">不要</span></div>`;
+  }
+  box.innerHTML = rows + `
+    <div class="grand-total">
+      <span class="gt-label">お見積り合計（税込）</span>
+      <span class="gt-val">${fmt(calcTotal())}</span>
+    </div>
+  `;
+
+  const summaryNotice = document.getElementById('factoryNoticeSummary');
+  if(['ipad','android','tablet','ipod','applewatch'].includes(state.deviceType)){
+    summaryNotice.innerHTML = `
+      <div class="factory-notice" style="margin-top:16px;">
+        <span class="fn-icon">⚠️</span>
+        <span>
+          提携の専門工場での修理となります。実機確認後に金額が変動する場合があるため、<b>こちらは確定の見積りではございません。</b>
+        </span>
+      </div>
+    `;
+  } else {
+    summaryNotice.innerHTML = '';
+  }
+}
+
+function goStep(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelector(`.panel[data-step="${n}"]`).classList.add('show');
+  document.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.classList.toggle('active', i+1===n);
+    d.classList.toggle('done', i+1<n);
+  });
+  if(n===4) renderSummary();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
